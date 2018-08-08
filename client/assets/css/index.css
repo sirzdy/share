@@ -1,0 +1,131 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Microsoft Yahei;
+}
+
+body {
+    perspective: 800px;
+    /* -webkit-app-region: drag; */
+    -webkit-user-select: none;
+}
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="text"],
+button,
+textarea {
+    -webkit-app-region: no-drag;
+}
+
+#container {
+    left: 2px;
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    background-color: #fff;
+    position: absolute;
+    -webkit-transition: -webkit-transform .6s ease-in-out;
+    transition: transform .6s ease-in-out;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    /* border-radius: 10px; */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+
+.title_bar {
+    height: 40px;
+    line-height: 40px;
+    /* font-weight: bold; */
+    background-color: #ccc;
+    /* border-top-left-radius: 10px;
+    border-top-right-radius: 10px; */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+}
+
+
+.title_bar_drag {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    text-indent: 10px;
+}
+
+.close {
+    height: 40px;
+    width: 40px;
+    position: relative;
+    /* border-top-right-radius: 10px; */
+}
+
+.close_btn {
+    height: 25px;
+    width: 25px;
+}
+
+.close:hover {
+    background: #f00;
+    cursor: pointer;
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.qr_wrap {
+    height: 300px;
+    /* flex-shrink: 0;
+    flex-grow: 0; */
+    position: relative;
+}
+
+#links {
+    flex: 1;
+    height: 100%;
+    background: #eee;
+    overflow: auto;
+}
+
+#links p {
+    cursor: pointer;
+    color: #666;
+}
+
+#links p:hover {
+    color: #333;
+}
+
+
+.current {
+    color: #000 !important;
+    font-weight: bold;
+}
+
+#open {
+    /* height: 40px; */
+    padding:8px 0;
+    line-height: 24px;
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+#dir{
+    font-size: 10px;
+}

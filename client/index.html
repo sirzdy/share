@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>文件传输工具</title>
+    <link rel="stylesheet" href="./assets/css/index.css">
+</head>
+
+<body>
+    <!-- Application Container -->
+    <section id="container">
+        <!-- Title Bar -->
+        <section class="title_bar">
+            <!-- Drag Region -->
+            <section class="title_bar_drag" style="-webkit-app-region: drag;">文件传输工具</section>
+            <section class="close" id="close">
+                <img src="./assets/img/close.svg" class="close_btn center">
+            </section>
+        </section>
+        <!-- QRCode -->
+        <section class="qr_wrap">
+            <section id="qrcode" class="center"></section>
+        </section>
+        <!-- Links -->
+        <section id="links">
+        </section>
+        <!-- Open Dir -->
+        <section id="open">
+            打开目录
+            <span id="dir"></span>
+        </section>
+    </section>
+    <script src="assets/js/qrcode.min.js"></script>
+    <script>
+        // You can also require other files to run in this process
+        require('./assets/js/renderer.js')
+    </script>
+</body>
+
+</html>
