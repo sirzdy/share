@@ -2,11 +2,11 @@
 
 **局域网内设备通过wifi实现文件传输(电脑<->移动设备), 目前仅适配windows**
 
-## 快照(Snapshot)
+## 快照
 
 ![快照](snapshot/window.png)
 
-## 使用(To Use)
+## 运行
 
 ```bash
 # Clone this repository
@@ -22,12 +22,12 @@ npm install electron-builder -g
 npm run dist
 ```
 
-## 功能(Function)
+## 功能
 
 - 移动设备访问电脑磁盘文件或下载
 - 移动设备上传文件到电脑
 
-## 使用(Usage)
+## 使用
 
 - 打开应用(请保证电脑与移动设备处于同一局域网，可以通过win10自带移动热点或猎豹wifi等共享热点)
 - 应用将启动服务，生成下载的链接与上传的链接，并生成当前所选链接的二维码
