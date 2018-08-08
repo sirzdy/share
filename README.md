@@ -2,6 +2,10 @@
 
 **局域网内设备通过wifi实现文件传输(电脑<->移动设备), 目前仅适配windows**
 
+## 快照(Snapshot)
+
+![快照](snapshot/window.png)
+
 ## 使用(To Use)
 
 ```bash
@@ -13,7 +17,8 @@ cd file-transfer
 npm install
 # Run the app
 npm start
-# Pack
+# Pack 
+npm install electron-builder -g
 npm run dist
 ```
 
@@ -43,3 +48,4 @@ npm run dist
 ## License
 
 [CC BY-NC-ND 2.5](https://creativecommons.org/licenses/by-nc-nd/2.5/)
+
