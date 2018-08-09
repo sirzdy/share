@@ -4,7 +4,12 @@
 
 ## 快照
 
-![快照](snapshot/window.png)
+![应用快照](snapshot/window.png)
+
+![下载快照](snapshot/download.png)
+
+![上传快照](snapshot/upload.png)
+
 
 ## 功能
 
