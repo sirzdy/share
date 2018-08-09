@@ -21,11 +21,13 @@ const { upload } = require('./server/upload');
 const { getPort } = require('./server/port');
 const { getIp } = require('./server/ip');
 const { copy } = require('./server/file');
+
 /* 主页 */
 const index = './client/index.html';
 /* 默认路径, 实际路径 */
 const defaultPath = path.join(os.homedir(), 'Documents', 'files');
 let filesPath = settings.get('path') || defaultPath;
+const basePort = 1225;
 
 let mainWindow = null;
 let tray = null;
@@ -109,7 +111,7 @@ function createWindow() {
         !fs.existsSync(downloadPath) && fs.mkdirSync(downloadPath);
         !fs.existsSync(uploadPath) && fs.mkdirSync(uploadPath);
         event.sender.send('files-path', filesPath);
-        getPort(1225, 2).then((ports) => {
+        getPort(basePort, 2).then((ports) => {
             let [downloadPort, uploadPort] = ports;
             let downloadOpts = {
                 port: downloadPort,
