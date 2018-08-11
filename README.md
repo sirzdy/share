@@ -6,8 +6,9 @@
 
 【应用快照】
 
-![应用快照](snapshot/mac.png)
+![应用快照 mac](snapshot/mac.png)
 
+![异常快照 windows](snapshot/error-windows.png)
 
 【下载快照】
 
