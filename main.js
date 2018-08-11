@@ -26,7 +26,13 @@ const { copy } = require('./server/file');
 const index = './client/index.html';
 /* 默认路径, 实际路径 */
 const defaultPath = path.join(os.homedir(), 'Documents', 'files');
-let filesPath = settings.get('path') || defaultPath;
+let settingPath = null;
+try {
+    settingPath = settings.get('path');
+} catch (err) {
+    console.log(err);
+}
+let filesPath = settingPath || defaultPath;
 const basePort = 1225;
 
 let mainWindow = null;
@@ -56,7 +62,11 @@ function createWindow() {
 
     // 托盘
     let tray = nativeImage.createFromPath(path.join(__dirname, 'tray.png'));
-    tray = new Tray(tray);
+    if (process.platform !== 'darwin') {
+        tray = new Tray(icon);
+    } else {
+        tray = new Tray(tray);
+    }
     const contextMenu = Menu.buildFromTemplate([
         {
             label: '打开窗口',
