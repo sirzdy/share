@@ -41,10 +41,10 @@ git clone https://github.com/sirzdy/file-transfer.git
 cd file-transfer
 # Install dependencies
 npm install
+npm install electron-builder -g
 # Run the app
 npm start
 # Pack 
-npm install electron-builder -g
 npm run dist
 ```
 

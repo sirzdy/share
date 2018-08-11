@@ -1,7 +1,6 @@
 const os = require('os');
-const wmic = require('wmic');
+const exec = require('child_process').exec;
 var ifaces = os.networkInterfaces();
-
 
 exports.getIp = function () {
     const nets = [];
@@ -17,23 +16,25 @@ exports.getIp = function () {
                 }
             });
         });
-        /* 设备管理器 */
-        wmic.get_list('nic', function (err, nics) {
-            if (err) return reject(err);
-            nics.forEach(function (nic) {
-                /* 筛选网卡 */
-                if (nic.Name && nic.NetConnectionID != '' && nic.MACAddress != '') {
+        exec('networksetup -listallhardwareports', function (err, out) {
+            if (err) console.log(err);
+            var blocks = out.toString().split(/Hardware/).slice(1);
+            blocks.forEach(function (block) {
+                var parts = block.match(/Port: (.+)/),
+                    mac = block.match(/Address: ([A-Fa-f0-9:-]+)/);
+                if (parts && mac) {
                     /* 筛选无线网卡 */
-                    if (nic.Name.match(/wi-?fi|wireless/i)) {
+                    if (parts[1].match(/Wi-?Fi|AirPort/i)) {
+                        let MACAddress = mac[1];
                         nets.forEach((net) => {
-                            if (net.mac.toLowerCase() === nic.MACAddress.toLowerCase()) {
+                            if (net.mac.toLowerCase() === MACAddress.toLowerCase()) {
                                 wirelessIps.push(net.address);
-                                resolve({ ips, wirelessIps });
                             }
                         })
                     }
                 }
             })
-        })
+            resolve({ ips, wirelessIps });
+        });
     })
 }

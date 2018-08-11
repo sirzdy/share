@@ -19,7 +19,7 @@ var c = require('child_process');
 const { download } = require('./server/download');
 const { upload } = require('./server/upload');
 const { getPort } = require('./server/port');
-const { getIp } = require('./server/ip');
+const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : require('./server/ip-windows');
 const { copy } = require('./server/file');
 
 /* 主页 */
@@ -35,21 +35,18 @@ let tray = null;
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 300, height: 650,
-        titleBarStyle: 'hiddenInset',
         show: false,
         resizable: false,
-        transparent: true,
         alwaysOnTop: true,
-        hasShadow: true,
-        darkTheme: true,
-        thickFrame: false,
         frame: false,
     })
 
     mainWindow.loadFile(index);
     // 图标
     let icon = nativeImage.createFromPath(path.join(__dirname, 'icon.png'));
-    mainWindow.setIcon(icon);
+    if (process.platform !== 'darwin') {
+        mainWindow.setIcon(icon);
+    }
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
@@ -58,16 +55,21 @@ function createWindow() {
     Menu.setApplicationMenu(null)
 
     // 托盘
-    tray = new Tray(icon);
+    let tray = nativeImage.createFromPath(path.join(__dirname, 'tray.png'));
+    tray = new Tray(tray);
     const contextMenu = Menu.buildFromTemplate([
+        {
+            label: '打开窗口',
+            click() { open() }
+        },
         {
             label: '设置目录',
             click() { setFilesPath() }
         },
-        {
-            label: '重新启动',
-            click() { restart() }
-        },
+        // {
+        //     label: '重新启动',
+        //     click() { restart() }
+        // },
         {
             label: '退出程序',
             role: 'quit'
@@ -76,23 +78,23 @@ function createWindow() {
     tray.setContextMenu(contextMenu);
     tray.setToolTip('文件传输工具');
     tray.on('click', () => {
-        if (mainWindow.isMinimized()) mainWindow.restore();
-        if (!mainWindow.isVisible()) mainWindow.show();
-        mainWindow.focus();
+        open();
     })
 
     /* 事件处理 */
     ipcMain.on('quit', (event, arg) => {
-        mainWindow.hide();
+        if (process.platform !== 'darwin') {
+            mainWindow.hide();
+        } else {
+            mainWindow.minimize();
+        }
     })
     /* 打开目录 */
     ipcMain.on('open', (event, arg) => {
-        // c.exec('start ' + filesPath);
-        shell.openExternal(filesPath);
+        shell.openItem(filesPath);
     })
     /* 打开链接 */
     ipcMain.on('link', (event, link) => {
-        // c.exec('start ' + link);
         shell.openExternal(link);
     })
     /* 上传文件 */
@@ -156,11 +158,17 @@ function setFilesPath() {
     restart();
 }
 
+/* 打开主窗口 */
+function open() {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    if (!mainWindow.isVisible()) mainWindow.show();
+    mainWindow.focus();
+}
 /* 重启 */
 function restart() {
     app.relaunch();
     tray.destroy();
-    app.exit();
+    app.quit();
 }
 
 /* 退出 */
