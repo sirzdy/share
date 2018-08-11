@@ -22,24 +22,27 @@ const { getPort } = require('./server/port');
 const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : require('./server/ip-windows');
 const { copy } = require('./server/file');
 
+/* 起始端口号 */
+const basePort = 1225;
 /* 主页 */
 const index = './client/index.html';
 /* 默认路径, 实际路径 */
 const defaultPath = path.join(os.homedir(), 'Documents', 'files');
-let settingPath = null;
-try {
-    settingPath = settings.get('path');
-} catch (err) {
-    console.log(err);
-    throw err;
-}
-let filesPath = settingPath || defaultPath;
-const basePort = 1225;
+let filesPath = defaultPath;
 
 let mainWindow = null;
 let tray = null;
 
 function createWindow() {
+    let settingPath = null;
+    try {
+        settingPath = settings.get('path');
+    } catch (err) {
+        console.log(err);
+        // throw err;
+    }
+    filesPath = settingPath || defaultPath;
+
     mainWindow = new BrowserWindow({
         width: 300,
         height: 650,

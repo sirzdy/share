@@ -4,14 +4,9 @@
 
 ## 快照
 
-【应用快照-windows】
+【应用快照】
 
-![应用快照-windows](snapshot/windows.png)
-
-
-【应用快照-mac】
-
-![应用快照-mac](snapshot/mac.png)
+![应用快照](snapshot/mac.png)
 
 
 【下载快照】
