@@ -76,12 +76,14 @@ function createWindow() {
             label: '设置目录',
             click() { setFilesPath() }
         }, {
+            type: 'separator'
+        }, {
             label: '查看帮助',
             click() { help() }
-        },{
+        }, {
             label: '意见反馈',
             click() { feedback() }
-        },{
+        }, {
             type: 'separator'
         }, {
             label: '重新启动',
@@ -198,7 +200,7 @@ function quit() {
 
 /* 查看帮助 */
 function help() {
-    const github= 'https://github.com/sirzdy/file-transfer';
+    const github = 'https://github.com/sirzdy/file-transfer';
     shell.openExternal(github);
 }
 
