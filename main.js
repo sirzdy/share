@@ -47,6 +47,7 @@ function createWindow() {
         resizable: false,
         alwaysOnTop: true,
         frame: false,
+        transparent: true
     })
 
     mainWindow.loadFile(index);

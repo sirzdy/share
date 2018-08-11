@@ -1,12 +1,18 @@
 # 局域网文件传输工具(FileTransfer)
 
-**局域网内设备通过wifi实现文件传输(电脑<->移动设备), 目前仅适配windows**
+**局域网内设备通过wifi实现文件传输(电脑<->移动设备)**
 
 ## 快照
 
-【应用快照】
+【应用快照-windows】
 
-![应用快照](snapshot/window.png)
+![应用快照-windows](snapshot/windows.png)
+
+
+【应用快照-mac】
+
+![应用快照-mac](snapshot/mac.png)
+
 
 【下载快照】
 
@@ -29,7 +35,7 @@
 - 左键点击链接可以生成对应的二维码，右键点击链接在默认浏览器中打开当前链接
 - 点击打开目录预览共享目录，可以通过资源管理器向共享目录拷贝文件目录等，亦可以将文件拖拽带应用窗口实现文件上传(不支持文件夹)
 - 移动设备浏览器中打开对应链接。扫描二维码(iphone自带相机即可扫描二维码)/手动输入地址
-- 默认共享目录是 `~/Documents/files/`，右键托盘选择设置目录可以修改目录
+- 默认共享目录是 `~/Documents/files/`，托盘菜单选择设置目录可以修改目录
 
 
 ## 运行
@@ -40,8 +46,8 @@ git clone https://github.com/sirzdy/file-transfer.git
 # Go into the repository
 cd file-transfer
 # Install dependencies
-npm install
 npm install electron-builder -g
+npm install
 # Run the app
 npm start
 # Pack 
@@ -55,7 +61,6 @@ npm run dist
 - 使用 [http-server](https://github.com/indexzero/http-server) 实现下载服务
 - 使用 [express](https://github.com/expressjs/express) [multer](https://github.com/expressjs/multer) 实现上传服务
 - 使用 [QRCode.js](https://github.com/davidshimjs/qrcodejs) 实现二维码生成
-- 关于本机无线网络连接ip的获取，使用 `wmic.get_list` 获取设备管理器设备列表(可以获取无线网卡)，使用 `os.networkInterfaces()` 获取所有的网络连接，二者结合进行筛选
 
 ## License
 
