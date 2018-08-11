@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>文件传输工具</title>
+    <title>局域网文件传输工具</title>
     <link rel="stylesheet" href="./assets/css/index.css">
+    <link rel="stylesheet" href="./assets/css/loading.css">
 </head>
 
 <body>
@@ -13,7 +14,7 @@
         <!-- Title Bar -->
         <section class="title_bar">
             <!-- Drag Region -->
-            <section class="title_bar_drag" style="-webkit-app-region: drag;">文件传输工具</section>
+            <section class="title_bar_drag" style="-webkit-app-region: drag;">局域网文件传输工具</section>
             <section class="close" id="close">
                 <img src="./assets/img/close.svg" class="close_btn center">
             </section>
@@ -31,6 +32,17 @@
             <span id="dir"></span>
         </section>
     </section>
+    <!-- Loading -->
+    <section class="loading">
+        <div class="loading-style-1">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </section>
+
     <script src="assets/js/qrcode.min.js"></script>
     <script>
         // You can also require other files to run in this process

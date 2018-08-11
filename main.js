@@ -31,6 +31,7 @@ try {
     settingPath = settings.get('path');
 } catch (err) {
     console.log(err);
+    throw err;
 }
 let filesPath = settingPath || defaultPath;
 const basePort = 1225;
@@ -40,7 +41,8 @@ let tray = null;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 300, height: 650,
+        width: 300,
+        height: 650,
         show: false,
         resizable: false,
         alwaysOnTop: true,
@@ -61,26 +63,30 @@ function createWindow() {
     Menu.setApplicationMenu(null)
 
     // 托盘
-    let tray = nativeImage.createFromPath(path.join(__dirname, 'tray.png'));
     if (process.platform !== 'darwin') {
         tray = new Tray(icon);
     } else {
-        tray = new Tray(tray);
+        tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'tray.png')));
     }
-    const contextMenu = Menu.buildFromTemplate([
+    let contextMenu = Menu.buildFromTemplate([
         {
             label: '打开窗口',
             click() { open() }
-        },
-        {
+        }, {
             label: '设置目录',
             click() { setFilesPath() }
-        },
-        // {
-        //     label: '重新启动',
-        //     click() { restart() }
-        // },
-        {
+        }, {
+            label: '查看帮助',
+            click() { help() }
+        },{
+            label: '意见反馈',
+            click() { feedback() }
+        },{
+            type: 'separator'
+        }, {
+            label: '重新启动',
+            click() { restart() }
+        }, {
             label: '退出程序',
             role: 'quit'
         }
@@ -89,7 +95,7 @@ function createWindow() {
     tray.setToolTip('文件传输工具');
     tray.on('click', () => {
         open();
-    })
+    });
 
     /* 事件处理 */
     ipcMain.on('quit', (event, arg) => {
@@ -98,15 +104,18 @@ function createWindow() {
         } else {
             mainWindow.minimize();
         }
-    })
+    });
+
     /* 打开目录 */
     ipcMain.on('open', (event, arg) => {
         shell.openItem(filesPath);
-    })
+    });
+
     /* 打开链接 */
     ipcMain.on('link', (event, link) => {
         shell.openExternal(link);
-    })
+    });
+
     /* 上传文件 */
     ipcMain.on('copy', (event, files) => {
         Promise.all(files.map((file) =>
@@ -116,7 +125,8 @@ function createWindow() {
         }).catch((err) => {
             console.log(err)
         });
-    })
+    });
+
     /* 开启服务器 */
     ipcMain.on('start', (event, arg) => {
         let [downloadPath, uploadPath] = [filesPath, path.join(filesPath, 'upload')];
@@ -148,20 +158,20 @@ function createWindow() {
         }).catch((err) => {
             throw err;
         });
-    })
+    });
 
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
-    })
+    });
 
     mainWindow.on('closed', function () {
         mainWindow = null;
-    })
+    });
 }
 
 /* 设置目录 */
 function setFilesPath() {
-    let path = dialog.showOpenDialog({ properties: ['openFile', 'openDirectory'] });
+    let path = dialog.showOpenDialog({ title: '请选择共享目录', defaultPath: filesPath, properties: ['openFile', 'openDirectory'] });
     if (!path) return;
     if (path[0] === filesPath) return;
     settings.set('path', path[0]);
@@ -174,17 +184,28 @@ function open() {
     if (!mainWindow.isVisible()) mainWindow.show();
     mainWindow.focus();
 }
+
 /* 重启 */
 function restart() {
     app.relaunch();
-    tray.destroy();
-    app.quit();
+    app.exit();
 }
 
 /* 退出 */
 function quit() {
-    tray.destroy();
     app.quit();
+}
+
+/* 查看帮助 */
+function help() {
+    const github= 'https://github.com/sirzdy/file-transfer';
+    shell.openExternal(github);
+}
+
+/* 意见反馈 */
+function feedback() {
+    const githubIssues = 'https://github.com/sirzdy/file-transfer/issues';
+    shell.openExternal(githubIssues);
 }
 
 /* 只允许一个实例 */

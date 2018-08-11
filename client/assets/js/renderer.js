@@ -2,15 +2,17 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const { ipcRenderer } = require('electron');
-
+const helpLink = 'https://github.com/sirzdy/file-transfer'
+const feedbackLink = 'https://github.com/sirzdy/file-transfer/issues'
 let container = document.getElementById('container');
 let close = document.getElementById('close');
 let links = document.getElementById('links');
 let open = document.getElementById('open');
 let dir = document.getElementById('dir');
+let loading = document.querySelector(".loading", null);
 
 /* 二维码初始化 */
-let qrcode = new QRCode(document.getElementById('qrcode'), null);
+let qrcode = new QRCode(document.getElementById('qrcode'), "");
 
 
 function hint(msg, duration, type) {
@@ -78,6 +80,22 @@ ipcRenderer.on('start-reply', (event, values) => {
     let downloadUrls = [];
     let uploadUrls = [];
     let [{ ips, wirelessIps }, downloadPort, uploadPort] = values;
+    loading.style.display = 'none';
+    if (!wirelessIps || !wirelessIps.length) {
+        let title = document.createElement('h3');
+        title.innerHTML = '抱歉，出错啦。<br><small>未连接无线网络或未开启网络热点。</small>';
+        links.appendChild(title);
+        let help = document.createElement('p');
+        help.innerText = '【查看帮助（右键打开）】';
+        help.setAttribute('link', helpLink);
+        links.appendChild(help);
+        let feedback = document.createElement('p');
+        feedback.innerText = '【意见反馈（右键打开）】';
+        feedback.setAttribute('link', feedbackLink);
+        links.appendChild(feedback);
+        help.click();
+        return;
+    }
     wirelessIps.forEach((ip) => {
         downloadUrls.push('http://' + ip + ':' + downloadPort);
         uploadUrls.push('http://' + ip + ':' + uploadPort);

@@ -10,4 +10,3 @@ exports.download = function (opts) {
         });
     })
 }
-
