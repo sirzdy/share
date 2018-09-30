@@ -21,6 +21,7 @@ const { upload } = require('./server/upload');
 const { getPort } = require('./server/port');
 const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : require('./server/ip-windows');
 const { copy } = require('./server/file');
+const { writeText } = require('./server/text');
 
 /* 起始端口号 */
 const basePort = 1225;
@@ -28,20 +29,38 @@ const basePort = 1225;
 const index = './client/index.html';
 /* 默认路径, 实际路径 */
 const defaultPath = path.join(os.homedir(), 'Documents', 'files');
+/* 默认类型，仅显示无线网 */
+let type = null;
+const defaultType = 1;
+
 let filesPath = defaultPath;
+let uploadPath;
+let downloadPath;
+let textPath;
+
+
 
 let mainWindow = null;
 let tray = null;
 
 function createWindow() {
     let settingPath = null;
+    let settingType = null;
     try {
         settingPath = settings.get('path');
+        settingType = settings.get('type');
     } catch (err) {
         console.log(err);
         // throw err;
     }
+    /* 目录 */
     filesPath = settingPath || defaultPath;
+    downloadPath = path.join(filesPath, 'download');
+    uploadPath = path.join(filesPath, 'upload');
+    textPath = path.join(filesPath, 'text');
+    [filesPath, downloadPath, uploadPath, textPath].forEach(mkdir);
+    /* 类型 */
+    type = settingType || defaultType;
 
     mainWindow = new BrowserWindow({
         width: 300,
@@ -61,7 +80,7 @@ function createWindow() {
     }
 
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools();
 
     // 菜单
     Menu.setApplicationMenu(null)
@@ -77,8 +96,33 @@ function createWindow() {
             label: '打开窗口',
             click() { open() }
         }, {
+            type: 'separator'
+        }, {
             label: '设置目录',
             click() { setFilesPath() }
+        }, {
+            label: '设置网络',
+            type: 'submenu',
+            submenu: [
+                {
+                    label: '全部',
+                    type: 'radio',
+                    checked: false,
+                    click() { setShowType(0) }
+                },
+                {
+                    label: '无线网',
+                    type: 'radio',
+                    checked: true,
+                    click() { setShowType(1) }
+                },
+                {
+                    label: '有线网',
+                    type: 'radio',
+                    checked: false,
+                    click() { setShowType(2) }
+                },
+            ]
         }, {
             type: 'separator'
         }, {
@@ -122,43 +166,65 @@ function createWindow() {
         shell.openExternal(link);
     });
 
+    /* 传输文本 */
+    ipcMain.on('send', (event, content) => {
+        // shell.openExternal(link);
+        writeText(content, textPath).then(() => {
+            event.sender.send('send-reply', true);
+        }).catch((err) => {
+            console.log(err)
+            event.sender.send('send-reply', false);
+        });
+    });
+
     /* 上传文件 */
     ipcMain.on('copy', (event, files) => {
         Promise.all(files.map((file) =>
-            copy(file, filesPath)
+            copy(file, downloadPath)
         )).then((ret) => {
             event.sender.send('copy-reply', ret);
         }).catch((err) => {
-            console.log(err)
+            console.log(err);
         });
     });
 
     /* 开启服务器 */
     ipcMain.on('start', (event, arg) => {
-        let [downloadPath, uploadPath] = [filesPath, path.join(filesPath, 'upload')];
-        !fs.existsSync(downloadPath) && fs.mkdirSync(downloadPath);
-        !fs.existsSync(uploadPath) && fs.mkdirSync(uploadPath);
         event.sender.send('files-path', filesPath);
         getPort(basePort, 2).then((ports) => {
-            let [downloadPort, uploadPort] = ports;
+            let [uploadPort, downloadPort] = ports;
             let downloadOpts = {
                 port: downloadPort,
                 root: downloadPath
             }
             let uploadOpts = {
                 port: uploadPort,
+                downloadPort,
+                textPath,
                 root: uploadPath
             }
             Promise.all([getIp(), download(downloadOpts), upload(uploadOpts)]).then((values) => {
-                event.sender.send('start-reply', values);
+                event.sender.send('start-reply', [...values, type]);
                 let [{ ips, wirelessIps }, downloadRetPort, uploadRetPort] = values;
+                let wiredIps = [];
+                ips.forEach((ip) => {
+                    if (wirelessIps.indexOf(ip) < 0) {
+                        wiredIps.push(ip);
+                    }
+                })
                 console.log('Download:');
-                wirelessIps.forEach((x) => {
-                    console.log('http://' + x + ':' + downloadRetPort);
+                wirelessIps.length && wirelessIps.forEach((x) => {
+                    console.log('[wireless]', 'http://' + x + ':' + downloadRetPort);
+                })
+                wiredIps.length && wiredIps.forEach((x) => {
+                    console.log('[wired]', 'http://' + x + ':' + downloadRetPort);
                 })
                 console.log('Upload:');
-                wirelessIps.forEach((x) => {
-                    console.log('http://' + x + ':' + uploadRetPort);
+                wirelessIps.length && wirelessIps.forEach((x) => {
+                    console.log('[wireless]', 'http://' + x + ':' + uploadRetPort);
+                })
+                wiredIps.length && wiredIps.forEach((x) => {
+                    console.log('[wired]', 'http://' + x + ':' + uploadRetPort);
                 })
             })
         }).catch((err) => {
@@ -173,6 +239,17 @@ function createWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+}
+
+/* 创建目录 */
+function mkdir(path) {
+    !fs.existsSync(path) && fs.mkdirSync(path);
+}
+
+/* 设置网络类型 0 全部 1 仅无限网 2 仅有线网 */
+function setShowType(type) {
+    mainWindow.webContents.send('show-type', type);
+    settings.set('type', type);
 }
 
 /* 设置目录 */

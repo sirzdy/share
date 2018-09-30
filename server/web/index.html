@@ -3,28 +3,18 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>文件上传</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>局域网传输工具</title>
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/index.css">
 </head>
 
-<body>
-    <input id="input" type="file" value="" multiple style="display: none;" />
-    <section class="container">
-        <div id="file">上传文件</div>
-        <ul id="ul">
-            <br id="bot">
-        </ul>
-    </section>
-    <section class="loading">
-        <div class="loading-style-1">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </section>
+<body class="container">
+    <a class="link" id="download">下载文件</a>
+    <a class="link" href="upload.html">上传文件</a>
+    <a class="link" href="text.html">文本传输</a>
+
+    <script src="assets/js/axios.min.js"></script>
     <script src="assets/js/index.js"></script>
 </body>

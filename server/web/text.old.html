@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>文本传输</title>
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/text.css">
+</head>
+
+<body>
+    <div id="app">
+        <section class="container">
+            <section class="fn">
+                <div class="dates">
+                    <input class="date" type="date" ref="startDate">
+                    <input class="date" type="date" ref="endDate">
+                </div>
+                <div class="btn" @click="getTexts">查询</div>
+            </section>
+            <section class="body">
+                <div v-if="newTexts && newTexts.length" class="texts">
+                    <div class="text_date">新增</div>
+                    <div class="text" v-for="r in newTexts">
+                        <div class="text_con">{{r[1]}}</div>
+                        <div class="text_fn">
+                            <div class="text_fn_time">{{r[0]|getTime}}</div>
+                            <img class="text_fn_copy" :data-clipboard-text="r[1]" src="assets/image/copy.png" alt=""
+                                @click="copy()">
+                        </div>
+                    </div>
+                </div>
+                <div v-for="item in texts" class="texts">
+                    <div class="text_date">{{ item.date }}</div>
+                    <div class="text" v-for="r in item.res">
+                        <div class="text_con">{{r[1]}}</div>
+                        <div class="text_fn">
+                            <div class="text_fn_time">{{r[0]|getTime}}</div>
+                            <img class="text_fn_copy" :data-clipboard-text="r[1]" src="assets/image/copy.png" alt=""
+                                @click="copy()">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="fn">
+                <textarea name="" class="content" ref="textarea"></textarea>
+                <div class="btn" @click="addText">发送</div>
+            </section>
+        </section>
+    </div>
+    <script src="assets/js/clipboard.min.js"></script>
+    <script src="assets/js/axios.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/vue.min.js"></script>
+    <script src="assets/js/text.js"></script>
+</body>

@@ -1,10 +1,19 @@
 const express = require('express');
+const bodyParser = require('body-parser')
 const multer = require('multer');
 const path = require('path');
 const app = express();
+const text = require('./text');
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+
 exports.upload = function (opts) {
     let {
         port,
+        downloadPort,
+        textPath,
         root
     } = opts;
     return new Promise((resolve, reject) => {
@@ -44,17 +53,43 @@ exports.upload = function (opts) {
                 });
             })
         })
-        // app.post('/upload', upload.array('files'), function (req, res, next) {
-        //     let files = req.files;
-        //     let rets = [];
-        //     for (let i = 0; i < files.length; i++) {
-        //         let file = files[i];
-        //         rets.push(file);
-        //     }
-        //     res.json({
-        //         rets
-        //     });
-        // });
+
+        // 获取下载端口
+        app.get('/download', function (req, res) {
+            console.log(downloadPort);
+            res.json({
+                state: true,
+                downloadPort
+            });
+        })
+
+        // 添加文本记录
+        app.post('/addText', function (req, res) {
+            let content = req.body.content;
+            if (!content) {
+                res.json({
+                    state: false,
+                    error: '内容不得为空'
+                })
+            } else {
+                text.writeText(content, textPath).then(() => {
+                    res.json({
+                        state: true
+                    });
+                });
+            }
+        })
+
+        // 获取文本记录
+        app.get('/getTexts', function (req, res) {
+            text.readTexts(new Date(req.query.startDate), new Date(req.query.endDate), textPath).then((ret) => {
+                let texts = ret.filter(x => x.res);
+                res.json({
+                    state: true,
+                    texts
+                })
+            })
+        })
 
         app.listen(port, () => resolve(port))
     })

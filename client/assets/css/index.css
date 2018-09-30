@@ -7,6 +7,10 @@ body {
     font-family: Microsoft Yahei;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
     perspective: 800px;
     /* -webkit-app-region: drag; */
@@ -117,6 +121,32 @@ textarea {
     color: #000 !important;
     font-weight: bold;
 }
+/* 发送文字 */
+#text{
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+#content{
+    max-height: 50px;
+    width: 100%;
+    flex: 1;
+    height: 100%;
+    resize: none;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: Microsoft Yahei;
+}
+#send{
+    width: 50px;
+    height: 100%;
+    line-height: 50px;
+    border-left: 1px solid #eee;
+}
 
 #open {
     /* height: 40px; */
@@ -125,7 +155,6 @@ textarea {
     background-color: #ddd;
     cursor: pointer;
 }
-
 #dir{
     font-size: 10px;
 }

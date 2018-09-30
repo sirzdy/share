@@ -21,8 +21,10 @@
     "electron": "^2.0.7"
   },
   "dependencies": {
+    "body-parser": "^1.18.3",
     "electron-settings": "^3.2.0",
     "express": "^4.16.3",
+    "fast-csv": "^2.4.1",
     "http-server": "^0.11.1",
     "multer": "^1.3.1",
     "network": "^0.4.1",
