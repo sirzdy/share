@@ -3,6 +3,7 @@ const {
     app,
     BrowserWindow,
     globalShortcut,
+    clipboard,
     Tray,
     Menu,
     nativeImage,
@@ -17,7 +18,7 @@ const os = require('os');
 var c = require('child_process');
 
 const { download } = require('./server/download');
-const { upload } = require('./server/upload');
+const { upload, io } = require('./server/upload');
 const { getPort } = require('./server/port');
 const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : require('./server/ip-windows');
 const { copy } = require('./server/file');
@@ -98,6 +99,11 @@ function createWindow() {
         }, {
             type: 'separator'
         }, {
+            label: '发送剪贴板',
+            click() { sendClipboard() }
+        }, {
+            type: 'separator'
+        }, {
             label: '设置目录',
             click() { setFilesPath() }
         }, {
@@ -169,6 +175,7 @@ function createWindow() {
     /* 传输文本 */
     ipcMain.on('send', (event, content) => {
         // shell.openExternal(link);
+        io.emit('new message', content);
         writeText(content, textPath).then(() => {
             event.sender.send('send-reply', true);
         }).catch((err) => {
@@ -239,6 +246,11 @@ function createWindow() {
     mainWindow.on('closed', function () {
         mainWindow = null;
     });
+
+    /* 注册剪贴板事件 */
+    globalShortcut.register('CommandOrControl+Alt+C', function () {
+        sendClipboard();
+    })
 }
 
 /* 创建目录 */
@@ -267,6 +279,30 @@ function open() {
     if (!mainWindow.isVisible()) mainWindow.show();
     mainWindow.focus();
 }
+
+
+/* 发送剪贴板内容 */
+function sendClipboard() {
+    let content = clipboard.readText();
+    io.emit('new message', content);
+    writeText(content, textPath).then(() => {
+        // dialog.showMessageBox({
+        //     type: 'info',
+        //     message: '剪贴板内容发送成功!',
+        //     detail: content,
+        //     buttons: ['OK']
+        // })
+    }).catch((err) => {
+        console.log(err)
+        dialog.showMessageBox({
+            type: 'info',
+            message: '剪贴板内容发送失败!',
+            detail: content,
+            buttons: ['OK']
+        })
+    });
+}
+
 
 /* 重启 */
 function restart() {

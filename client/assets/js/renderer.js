@@ -53,6 +53,20 @@ window.onload = () => {
 close.onclick = () => {
     ipcRenderer.send('quit');
 }
+
+/* 快捷键清空发送 */
+document.onkeydown = function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    if (e && e.keyCode == 27) { // 按 Esc 
+        //要做的事情
+        content.value = "";
+    }
+    if (e && e.keyCode == 13 && (e.metaKey || e.ctrlKey)) { // enter 键
+        //要做的事情
+        send.click();
+    }
+};
+
 /* 发送文本 */
 send.onclick = () => {
     if (!content.value) {
@@ -60,6 +74,7 @@ send.onclick = () => {
         return;
     }
     ipcRenderer.send('send', content.value);
+    content.value = "";
 }
 
 /* 打开目录 */

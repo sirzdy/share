@@ -16,7 +16,10 @@ body {
     /* -webkit-app-region: drag; */
     -webkit-user-select: none;
 }
-
+::-webkit-input-placeholder{
+    color:#ccc;
+    font-size: 12px;
+}
 input[type="submit"],
 input[type="reset"],
 input[type="button"],
@@ -142,7 +145,7 @@ textarea {
     font-family: Microsoft Yahei;
 }
 #send{
-    width: 50px;
+    width: 45px;
     height: 100%;
     line-height: 50px;
     border-left: 1px solid #eee;

@@ -3,13 +3,20 @@ const bodyParser = require('body-parser')
 const multer = require('multer');
 const path = require('path');
 const app = express();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 const text = require('./text');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-exports.upload = function (opts) {
+module.exports = {
+    upload,
+    io
+}
+
+function upload(opts) {
     let {
         port,
         downloadPort,
@@ -90,7 +97,15 @@ exports.upload = function (opts) {
                 })
             })
         })
-
-        app.listen(port, () => resolve(port))
+        io.on('connection', function (socket) {
+            // console.log('a user connected');
+            // socket.on('new message', function (msg) {
+            //     console.log('message: ' + msg);
+            // });
+            socket.on('disconnect', function () {
+                // console.log('user disconnected');
+            });
+        });
+        http.listen(port, () => resolve(port))
     })
 }
