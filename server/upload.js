@@ -62,8 +62,7 @@ function upload(opts) {
         })
 
         // 获取下载端口
-        app.get('/download', function (req, res) {
-            console.log(downloadPort);
+        app.get('/getDownloadPort', function (req, res) {
             res.json({
                 state: true,
                 downloadPort
