@@ -17,7 +17,7 @@
     "share"
   ],
   "author": "zdy",
-  "license": "by-nc-sa 4.0",
+  "license": "CC-BY-NC-SA-4.0",
   "devDependencies": {
     "electron": "^2.0.7"
   },
