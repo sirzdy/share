@@ -1,7 +1,7 @@
 # 局域网共享工具
 
 
-[下载地址](https://github.com/sirzdy/share/releases)
+[安装包下载地址（Win Mac）](https://github.com/sirzdy/share/releases)
 
 
 **局域网内设备通过wifi实现文件传输(电脑<->移动设备)**
@@ -47,6 +47,7 @@
 - 移动设备浏览器中打开对应链接。扫描二维码(iphone自带相机即可扫描二维码)/手动输入地址
 - 使用 `Cmd/Ctrl+Alt+C` 可以快速发送剪贴板文字，也可以使用面本的文本框输入并发送(输入框支持Cmd/Ctrl+Enter发送，ESC清空)，也可以使用托盘菜单快速发送剪贴板文字。
 - 默认共享目录是 `~/Documents/files/`，托盘菜单选择设置目录可以修改目录。
+- 下载目录新增文件、新增文本传输可以实时通知。
 - 注意：本文档可能更新不及时，具体功能请以实际为主。
 
 ## 快照
@@ -91,6 +92,8 @@ npm start
 # Pack 
 npm run dist
 ```
+
+[客户端源码-Github](https://github.com/sirzdy/share)
 
 ## 技术点
 
