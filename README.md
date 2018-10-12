@@ -1,7 +1,7 @@
 # 局域网共享工具
 
 
-[安装包下载地址（Win Mac）](https://github.com/sirzdy/share/releases)
+[安装包下载地址（包含Win/Mac）](https://github.com/sirzdy/share/releases)
 
 
 **局域网内设备通过wifi实现文件传输(电脑<->移动设备)**
