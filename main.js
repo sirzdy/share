@@ -327,13 +327,13 @@ function quit() {
 
 /* 查看帮助 */
 function help() {
-    const github = 'https://github.com/sirzdy/file-transfer';
+    const github = 'https://github.com/sirzdy/share';
     shell.openExternal(github);
 }
 
 /* 意见反馈 */
 function feedback() {
-    const githubIssues = 'https://github.com/sirzdy/file-transfer/issues';
+    const githubIssues = 'https://github.com/sirzdy/share/issues';
     shell.openExternal(githubIssues);
 }
 
