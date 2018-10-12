@@ -85,7 +85,7 @@ git clone https://github.com/sirzdy/file-transfer.git
 cd file-transfer
 # Install dependencies
 npm install electron-builder -g
-npm install
+npm install  # sudo npm install --unsafe-perm=true --allow-root 报错请尝试
 # Run the app
 npm start
 # Pack 
