@@ -189,6 +189,7 @@ function createWindow() {
         Promise.all(files.map((file) =>
             copy(file, downloadPath)
         )).then((ret) => {
+            io.emit('new files', ret);
             event.sender.send('copy-reply', ret);
         }).catch((err) => {
             console.log(err);
