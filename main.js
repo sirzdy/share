@@ -285,6 +285,15 @@ function open() {
 /* 发送剪贴板内容 */
 function sendClipboard() {
     let content = clipboard.readText();
+    if (!content) {
+        dialog.showMessageBox({
+            type: 'info',
+            message: '发送失败',
+            detail: '剪贴板不含文本或剪贴板为空',
+            buttons: ['OK']
+        })
+        return;
+    }
     io.emit('new message', content);
     writeText(content, textPath).then(() => {
         // dialog.showMessageBox({
