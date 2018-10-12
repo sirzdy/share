@@ -37,9 +37,9 @@ function upload(opts) {
             storage
         });
         app.use(express.static(path.join(__dirname, 'web')));
-        app.get('/', (req, res) => {
-            res.sendFile(path.join(__dirname, 'web/index.html'));
-        })
+        // app.get('/', (req, res) => {
+        //     res.sendFile(path.join(__dirname, 'web/index.html'));
+        // })
         let up = upload.array('files');
         app.post('/upload', function (req, res) {
             up(req, res, function (err) {
