@@ -1,7 +1,7 @@
 {
-  "name": "FileTransfer",
-  "version": "1.0.0",
-  "description": "Transfer files through wifi hotspot.",
+  "name": "Share",
+  "version": "2.0.0",
+  "description": "Share files and text in the LAN(Local Area Network).",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -9,14 +9,15 @@
     "dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps"
   },
-  "repository": "https://github.com/sirzdy/file-transfer",
+  "repository": "https://github.com/sirzdy/share",
   "keywords": [
     "Electron",
     "file",
-    "transfer"
+    "transfer",
+    "share"
   ],
   "author": "zdy",
-  "license": "CC0-1.0",
+  "license": "by-nc-sa 4.0",
   "devDependencies": {
     "electron": "^2.0.7"
   },
