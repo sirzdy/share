@@ -2,15 +2,17 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const { ipcRenderer } = require('electron');
-const helpLink = 'https://github.com/sirzdy/file-transfer'
-const feedbackLink = 'https://github.com/sirzdy/file-transfer/issues'
+const helpLink = 'https://github.com/sirzdy/share'
+const feedbackLink = 'https://github.com/sirzdy/share/issues'
 let container = document.getElementById('container');
 let close = document.getElementById('close');
 let links = document.getElementById('links');
 let open = document.getElementById('open');
 let dir = document.getElementById('dir');
 let send = document.getElementById('send');
+let generate = document.getElementById('generate');
 let content = document.getElementById('content');
+let qrcontent = document.getElementById('qrcontent');
 let loading = document.querySelector(".loading", null);
 
 let ips, downloadPort, uploadPort;
@@ -58,14 +60,36 @@ close.onclick = () => {
 document.onkeydown = function (event) {
     var e = event || window.event || arguments.callee.caller.arguments[0];
     if (e && e.keyCode == 27) { // 按 Esc 
-        //要做的事情
-        content.value = "";
+        if (document.activeElement === content) {
+            content.value = "";
+        }
+        if (document.activeElement === qrcontent) {
+            qrcontent.value = "";
+        }
     }
     if (e && e.keyCode == 13 && (e.metaKey || e.ctrlKey)) { // enter 键
-        //要做的事情
-        send.click();
+        if (document.activeElement === content) {
+            //要做的事情
+            send.click();
+        }
+        if (document.activeElement === qrcontent) {
+            //要做的事情
+            generate.click();
+        }
     }
 };
+
+/* 将文字生成位二维码 */
+generate.onclick = () => {
+    if (!qrcontent.value) {
+        hint('请输入内容！', 'fail');
+        return;
+    }
+    links.childNodes.forEach((link) => {
+        link.className = '';
+    })
+    qrcode.makeCode(qrcontent.value);
+}
 
 /* 发送文本 */
 send.onclick = () => {

@@ -33,6 +33,7 @@ const defaultPath = path.join(os.homedir(), 'Documents', 'files');
 /* 默认类型，仅显示无线网 */
 let type = null;
 const defaultType = 1;
+const isDev = false;
 
 let filesPath = defaultPath;
 let uploadPath;
@@ -63,15 +64,28 @@ function createWindow() {
     /* 类型 */
     type = settingType || defaultType;
 
-    mainWindow = new BrowserWindow({
-        width: 300,
-        height: 650,
-        show: false,
-        resizable: false,
-        alwaysOnTop: true,
-        frame: false,
-        transparent: true
-    })
+
+    if (isDev) {
+        mainWindow = new BrowserWindow({
+            width: 900,
+            height: 650,
+            show: false,
+            resizable: false,
+            alwaysOnTop: true,
+            frame: false,
+            transparent: true
+        })
+    } else {
+        mainWindow = new BrowserWindow({
+            width: 300,
+            height: 650,
+            show: false,
+            resizable: false,
+            alwaysOnTop: false,
+            frame: false,
+            transparent: true
+        })
+    }
 
     mainWindow.loadFile(index);
     // 图标
@@ -79,12 +93,35 @@ function createWindow() {
     if (process.platform !== 'darwin') {
         mainWindow.setIcon(icon);
     }
-
     // Open the DevTools.
-    // mainWindow.webContents.openDevTools();
-
+    isDev && mainWindow.webContents.openDevTools();
+    // 修复mac下无法复制粘贴等问题
+    let template = [{
+        label: "Application",
+        submenu: [
+            { label: "关于", selector: "orderFrontStandardAboutPanel:" },
+            { type: "separator" },
+            { label: "退出", accelerator: "Command+Q", click: function () { app.quit(); } }
+        ]
+    }, {
+        label: "编辑",
+        submenu: [
+            { label: "撤销", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+            { label: "恢复", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+            { type: "separator" },
+            { label: "剪切", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+            { label: "复制", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+            { label: "粘贴", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+            { label: "全选", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]
+    }, {
+        label: "功能",
+        submenu: [
+            { label: "发送剪贴板", accelerator: "CmdOrCtrl+Alt+C", click: function () { sendClipboard(); } },
+        ]
+    }];
     // 菜单
-    Menu.setApplicationMenu(null)
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
     // 托盘
     if (process.platform !== 'darwin') {

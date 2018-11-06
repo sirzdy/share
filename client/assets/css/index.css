@@ -125,16 +125,16 @@ textarea {
     font-weight: bold;
 }
 /* 发送文字 */
-#text{
-    height: 50px;
+#text, #qrtext{
+    height: 60px;
     display: flex;
     flex-direction: row;
     align-items: center;
     text-align: center;
     border-top: 1px solid #eee;
 }
-#content{
-    max-height: 50px;
+#content, #qrcontent{
+    max-height: 60px;
     width: 100%;
     flex: 1;
     height: 100%;
@@ -144,10 +144,10 @@ textarea {
     background: transparent;
     font-family: Microsoft Yahei;
 }
-#send{
+#send, #generate{
     width: 45px;
     height: 100%;
-    line-height: 50px;
+    line-height: 60px;
     border-left: 1px solid #eee;
 }
 
