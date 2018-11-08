@@ -2,8 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const { ipcRenderer } = require('electron');
-const helpLink = 'https://github.com/sirzdy/share'
-const feedbackLink = 'https://github.com/sirzdy/share/issues'
+const helpLink = 'https://github.com/sirzdy/share';
+const feedbackLink = 'https://github.com/sirzdy/share/issues';
 let container = document.getElementById('container');
 let close = document.getElementById('close');
 let links = document.getElementById('links');
@@ -17,8 +17,12 @@ let loading = document.querySelector(".loading", null);
 
 let ips, downloadPort, uploadPort;
 /* 二维码初始化 */
-let qrcode = new QRCode(document.getElementById('qrcode'), "");
-
+let qrcode = new QRCode(document.getElementById('qrcode'), {
+    text: helpLink,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.L // LMQH
+});
 
 function hint(msg, type, duration) {
     duration = isNaN(duration) ? 1500 : duration;
@@ -88,7 +92,11 @@ generate.onclick = () => {
     links.childNodes.forEach((link) => {
         link.className = '';
     })
-    qrcode.makeCode(qrcontent.value);
+    try {
+        qrcode.makeCode(qrcontent.value);
+    } catch (err) {
+        hint(err, 'fail', 2500);
+    }
 }
 
 /* 发送文本 */

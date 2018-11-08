@@ -24,6 +24,8 @@ const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : r
 const { copy } = require('./server/file');
 const { writeText } = require('./server/text');
 
+const gotTheLock = app.requestSingleInstanceLock()
+
 /* 起始端口号 */
 const basePort = 1225;
 /* 主页 */
@@ -64,28 +66,17 @@ function createWindow() {
     /* 类型 */
     type = settingType || defaultType;
 
-
-    if (isDev) {
-        mainWindow = new BrowserWindow({
-            width: 900,
-            height: 650,
-            show: false,
-            resizable: false,
-            alwaysOnTop: true,
-            frame: false,
-            transparent: true
-        })
-    } else {
-        mainWindow = new BrowserWindow({
-            width: 300,
-            height: 650,
-            show: false,
-            resizable: false,
-            alwaysOnTop: false,
-            frame: false,
-            transparent: true
-        })
-    }
+    width = isDev ? 900 : 300;
+    mainWindow = new BrowserWindow({
+        width,
+        height: 650,
+        show: false,
+        resizable: false,
+        alwaysOnTop: false,
+        frame: false,
+        // titleBarStyle: 'hidden',
+        transparent: true
+    })
 
     mainWindow.loadFile(index);
     // 图标
@@ -375,20 +366,21 @@ function feedback() {
 }
 
 /* 只允许一个实例 */
-const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore();
-        if (!mainWindow.isVisible()) mainWindow.show();
-        mainWindow.focus();
-    }
-})
-
-if (isSecondInstance) {
+if (!gotTheLock) {
     app.quit()
-}
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        // Someone tried to run a second instance, we should focus our window.
+        if (myWindow) {
+            if (myWindow.isMinimized()) myWindow.restore();
+            if (!mainWindow.isVisible()) mainWindow.show();
+            myWindow.focus();
+        }
+    })
 
-app.on('ready', createWindow)
+    // Create myWindow, load the rest of the app, etc...
+    app.on('ready', createWindow)
+}
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') {
