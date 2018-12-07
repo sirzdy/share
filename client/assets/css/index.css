@@ -240,7 +240,7 @@ textarea {
 
 #open {
     display: flex;
-    flex:3;
+    flex:5;
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -270,6 +270,7 @@ textarea {
 }
 
 #mine{
+    flex:3;
     padding: 0 5px;
     border-right: 1px solid #000;
 }

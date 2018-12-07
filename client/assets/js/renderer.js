@@ -303,7 +303,7 @@ ipcRenderer.on('get-collect-reply', (event, data) => {
 
 
 ipcRenderer.on('files-path', (event, filesPath) => {
-    let n = 28;
+    let n = 15;
     let c = filesPath.length > n ? '...' + filesPath.slice(-n) : filesPath;
     dir.innerText = '[' + c + ']';
 })
