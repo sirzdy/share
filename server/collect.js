@@ -22,7 +22,7 @@ function getCollections(collectionPath) {
     let collections = [];
     return new Promise((resolve, reject) => {
         if (!fs.existsSync(collectionPath)) {
-            resolve({ date, res: null });
+            resolve([]);
         } else {
             csv
                 .fromPath(collectionPath)

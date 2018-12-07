@@ -131,7 +131,6 @@ myCollectionMask.onclick = () => {
 }
 
 mine.onclick = () => {
-    myCollectionPopup.style.display = 'flex';
     ipcRenderer.send('getCollections');
 }
 
@@ -254,7 +253,12 @@ ipcRenderer.on('copy-clipboard-reply', (event, state) => {
 
 ipcRenderer.on('get-collect-reply', (event, data) => {
     if (data) {
+        if (data.length === 0) {
+            hint('暂无收藏!', 'fail');
+            return;
+        }
         hint('获取收藏成功!!!');
+        myCollectionPopup.style.display = 'flex';
         data.sort((a, b) => b[0] - a[0]);
         let cons = [];
         data.forEach((x, i) => {
@@ -299,7 +303,9 @@ ipcRenderer.on('get-collect-reply', (event, data) => {
 
 
 ipcRenderer.on('files-path', (event, filesPath) => {
-    dir.innerText = '[' + filesPath + ']';
+    let n = 28;
+    let c = filesPath.length > n ? '...' + filesPath.slice(-n) : filesPath;
+    dir.innerText = '[' + c + ']';
 })
 
 ipcRenderer.on('show-type', (event, type) => {

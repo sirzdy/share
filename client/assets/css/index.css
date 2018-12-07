@@ -239,6 +239,7 @@ textarea {
 }
 
 #open {
+    display: flex;
     flex:3;
     flex-direction: row;
     align-items: center;
