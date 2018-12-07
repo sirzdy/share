@@ -6,6 +6,7 @@
     <title>Share</title>
     <link rel="stylesheet" href="./assets/css/index.css">
     <link rel="stylesheet" href="./assets/css/loading.css">
+    <link rel="stylesheet" href="./assets/css/animate.min.css">
 </head>
 
 <body>
@@ -23,6 +24,11 @@
         <section class="qr_wrap">
             <section id="qrcode" class="center"></section>
         </section>
+        <!-- Collection -->
+        <!-- <section id="collection">
+            <img src="./assets/img/collect.svg" id="collectImg">
+            <img src="./assets/img/uncollect.svg" id="uncollectImg">
+        </section> -->
         <!-- Generate -->
         <section id="qrtext">
             <textarea name="" id="qrcontent" placeholder=" 请输入需要生成二维码的文字 &#10;【Cmd/Ctrl+Enter发送，ESC清空】"></textarea>
@@ -37,9 +43,12 @@
         <section id="links">
         </section>
         <!-- Open Dir -->
-        <section id="open">
-            打开目录
-            <span id="dir"></span>
+        <section id="footer">
+            <div id="mine">我的收藏</div>
+            <div id="open">
+                <span>打开目录</span>
+                <span id="dir"></span>
+            </div>
         </section>
     </section>
     <!-- Loading -->
@@ -53,7 +62,19 @@
         </div>
     </section>
 
+    <section class="popup" id="remarkPopup">
+        <div class="mask" id="remarkMask"></div>
+        <textarea type="text" id="remark" placeholder=" 请输入备注 &#10; 【Cmd/Ctrl+Enter发送，ESC清空】"></textarea>
+        <div id="collect">收藏</div>
+    </section>
+
+    <section class="popup" id="myCollectionPopup">
+        <div class="mask" id="myCollectionMask"></div>
+        <div id="myCollections"></div>
+    </section>
+
     <script src="assets/js/qrcode.min.js"></script>
+    <script src="assets/js/html2canvas.min.js"></script>
     <script>
         // You can also require other files to run in this process
         require('./assets/js/renderer.js')

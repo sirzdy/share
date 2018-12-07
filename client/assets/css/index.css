@@ -98,8 +98,6 @@ textarea {
 
 .qr_wrap {
     height: 300px;
-    /* flex-shrink: 0;
-    flex-grow: 0; */
     position: relative;
 }
 
@@ -151,13 +149,171 @@ textarea {
     border-left: 1px solid #eee;
 }
 
-#open {
-    /* height: 40px; */
+#footer {
+    height: 40px;
+    display: flex;
+    flex-direction: row;
     padding:8px 0;
     line-height: 24px;
     background-color: #ddd;
     cursor: pointer;
 }
+
 #dir{
     font-size: 10px;
+}
+
+#collection {
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    justify-content: center;
+}
+
+#collectImg {
+    width: 30px;
+    height: 30px;
+    display: none;
+}
+
+#uncollectImg {
+    width: 30px;
+    height: 30px;
+    display: block;
+}
+
+#collect {
+    height: 30px;
+    margin-top: 20px;
+    width: 60px;
+    line-height: 30px;
+    text-align: center;
+    background: #1296db;
+    border-radius: 5px;
+    color: #fff;
+}
+
+@keyframes collect {
+    0%,
+    100% {
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+}
+
+.mask {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: -1;
+}
+
+.popup {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#remark {
+    height: 80px;
+    line-height: 30px;
+    width: 250px;
+    font-size: 20px;
+    border-radius: 5px;
+    border: 2px solid #1296db;
+    resize: none;
+    outline: none;
+    font-family: Microsoft Yahei;
+}
+
+#open {
+    flex:3;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+#col {
+    flex:1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#remarkPopup {
+    display: none;
+}
+
+#myCollectionPopup {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 10px 40px;
+}
+
+#myCollections {
+    width: 100%;
+    overflow: auto;
+}
+
+#mine{
+    padding: 0 5px;
+    border-right: 1px solid #000;
+}
+
+.myCollection {
+    position: relative;
+    cursor: pointer;
+    margin:2px;
+    padding:2px;
+    border:2px solid #000;
+    border-radius:3px;
+    background:#fff;
+}
+
+.title {
+    color: #000;
+    display: block;
+    line-height: 28px;
+    font-size: 20px;
+}
+
+.time {
+    color: #898989;
+    display: block;
+    line-height: 20px;
+    font-size: 12px;
+}
+
+.content {
+    color: #252525;
+    display: block;
+    line-height: 16px;
+    font-size: 14px;
+}
+
+.copy {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 10px;
+    top: 10px;
+}
+
+.close_footer{
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
 }

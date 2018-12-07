@@ -23,6 +23,7 @@ const { getPort } = require('./server/port');
 const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : require('./server/ip-windows');
 const { copy } = require('./server/file');
 const { writeText } = require('./server/text');
+const { addCollections, getCollections } = require('./server/collect');
 
 const gotTheLock = app.requestSingleInstanceLock()
 
@@ -41,6 +42,7 @@ let filesPath = defaultPath;
 let uploadPath;
 let downloadPath;
 let textPath;
+let collectionPath;
 
 
 
@@ -62,6 +64,7 @@ function createWindow() {
     downloadPath = path.join(filesPath, 'download');
     uploadPath = path.join(filesPath, 'upload');
     textPath = path.join(filesPath, 'text');
+    collectionPath = path.join(textPath, 'collections.csv');
     [filesPath, downloadPath, uploadPath, textPath].forEach(mkdir);
     /* 类型 */
     type = settingType || defaultType;
@@ -109,6 +112,7 @@ function createWindow() {
         label: "功能",
         submenu: [
             { label: "发送剪贴板", accelerator: "CmdOrCtrl+Alt+C", click: function () { sendClipboard(); } },
+            { label: "重启", accelerator: "CmdOrCtrl+R", click: restart }
         ]
     }];
     // 菜单
@@ -198,6 +202,31 @@ function createWindow() {
     /* 打开链接 */
     ipcMain.on('link', (event, link) => {
         shell.openExternal(link);
+    });
+
+    /* 收藏 */
+    ipcMain.on('collect', (event, content, remark) => {
+        addCollections(content, remark, collectionPath).then(() => {
+            event.sender.send('collect-reply', true);
+        }).catch((err) => {
+            console.log(err)
+            event.sender.send('collect-reply', false);
+        });
+    });
+
+    ipcMain.on('copy-clipboard', (event, content) => {
+        clipboard.writeText(content);
+        event.sender.send('copy-clipboard-reply', true);
+    });
+
+    /* 查询收藏 */
+    ipcMain.on('getCollections', (event, content, remark) => {
+        getCollections(collectionPath).then((data) => {
+            event.sender.send('get-collect-reply', data);
+        }).catch((err) => {
+            console.log(err)
+            event.sender.send('get-collect-reply', false);
+        });
     });
 
     /* 传输文本 */
