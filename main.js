@@ -83,7 +83,8 @@ function createWindow() {
         alwaysOnTop: false,
         frame: true,
         // titleBarStyle: 'hidden',
-        transparent: false
+        transparent: false,
+        autoHideMenuBar: true
     });
 
     mainWindow.loadFile(index);
