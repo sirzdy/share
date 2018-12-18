@@ -84,10 +84,12 @@ function createWindow() {
         frame: true,
         // titleBarStyle: 'hidden',
         transparent: false,
-        autoHideMenuBar: true
+        autoHideMenuBar: true,
+        skipTaskbar: true
     });
 
     mainWindow.loadFile(index);
+    mainWindow.setSkipTaskbar(true);
     // 图标
     let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
     if (process.platform !== "darwin") {
@@ -530,7 +532,6 @@ function minimize() {
     } else {
         mainWindow.minimize();
     }
-    mainWindow.setSkipTaskbar(true);
 }
 
 /* 查看帮助 */
