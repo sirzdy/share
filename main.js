@@ -15,6 +15,7 @@ const settings = require("electron-settings");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
+const https = require("https");
 var c = require("child_process");
 
 const { download } = require("./server/download");
@@ -229,6 +230,12 @@ function createWindow() {
             type: "separator"
         },
         {
+            label: "检查更新",
+            click() {
+                checkUpdate();
+            }
+        },
+        {
             label: "查看帮助",
             click() {
                 help();
@@ -308,7 +315,7 @@ function createWindow() {
     });
 
     /* 查询收藏 */
-    ipcMain.on("getCollections", (event, content, remark) => {
+    ipcMain.on("get-collections", (event, content, remark) => {
         getCollections(collectionPath)
             .then(data => {
                 event.sender.send("get-collect-reply", data);
@@ -317,6 +324,11 @@ function createWindow() {
                 console.log(err);
                 event.sender.send("get-collect-reply", false);
             });
+    });
+
+    /* 更新 */
+    ipcMain.on("go-update", (event, content, remark) => {
+        goUpdate();
     });
 
     /* 传输文本 */
@@ -419,6 +431,9 @@ function createWindow() {
             .catch(err => {
                 throw err;
             });
+        update().then(info => {
+            event.sender.send("auto-update-reply", info);
+        });
     });
 
     mainWindow.once("ready-to-show", () => {
@@ -446,6 +461,60 @@ function createWindow() {
     /* 注册剪贴板事件 */
     globalShortcut.register("CommandOrControl+Alt+C", function() {
         sendClipboard();
+    });
+}
+
+function goUpdate() {
+    const githubReleases = "https://github.com/sirzdy/share/releases";
+    shell.openExternal(githubReleases);
+}
+
+function update() {
+    let localRawInfo = fs.readFileSync("package.json", "utf8");
+    let localInfo = JSON.parse(localRawInfo);
+    let localVersion = localInfo.version;
+    let url =
+        "https://raw.githubusercontent.com/sirzdy/share/master/package.json";
+    return new Promise((resolve, reject) => {
+        https.get(url, function(res) {
+            var statusCode = res.statusCode;
+            if (statusCode !== 200) {
+                // 出错回调
+                // error();
+                // 消耗响应数据以释放内存
+                res.resume();
+                return;
+            }
+            res.setEncoding("utf8");
+            var rawData = "";
+            res.on("data", function(chunk) {
+                rawData += chunk;
+            });
+
+            // 请求结束
+            res.on("end", function() {
+                // 成功回调
+                // console.log(JSON.parse(JSON.stringify(rawData)));
+                let remoteInfo = JSON.parse(rawData);
+                let remoteVersion = remoteInfo.version;
+                if (localVersion === remoteVersion) {
+                    // console.log("已经是最新版本了");
+                    resolve({ hasNewVersion: false, msg: "已经是最新版本了" });
+                }
+                if (localVersion < remoteVersion) {
+                    // console.log("有新版本");
+                    resolve({
+                        hasNewVersion: true,
+                        msg: `当前版本: ${localVersion}, 可升级到: ${remoteVersion}`
+                    });
+                }
+                // success(rawData);
+            }).on("error", function(e) {
+                // 出错回调
+                // error();
+                // console.log('error');
+            });
+        });
     });
 }
 
@@ -535,6 +604,31 @@ function minimize() {
     }
 }
 
+/* 检查更新 */
+function checkUpdate() {
+    update().then(info => {
+        if (info.hasNewVersion) {
+            dialog.showMessageBox({
+                type: "info",
+                message: "发现新版本",
+                detail: info.msg,
+                buttons: ["立即升级", "取消"]
+            }, (response) => {
+                if (response === 0) {
+                    goUpdate();
+                }
+            });
+        } else {
+            dialog.showMessageBox({
+                type: "info",
+                message: "暂无更新",
+                detail: info.msg,
+                buttons: ["确定"]
+            });
+        }
+    });
+}
+
 /* 查看帮助 */
 function help() {
     const github = "https://github.com/sirzdy/share";
@@ -544,6 +638,12 @@ function help() {
 /* 意见反馈 */
 function feedback() {
     const githubIssues = "https://github.com/sirzdy/share/issues";
+    shell.openExternal(githubIssues);
+}
+
+/* 意见反馈 */
+function feedback() {
+    const githubIssues = "https://github.com/sirzdy/share/releases";
     shell.openExternal(githubIssues);
 }
 

@@ -341,3 +341,46 @@ textarea {
     line-height: 40px;
     color: #fff;
 }
+
+#updateInfo {
+    flex: 1;
+    font-size: 12px;
+    text-align: left;
+}
+
+#update {
+    height: 26px;
+    display: flex;
+    flex-direction: row;
+    padding: 0 15px;
+    background-color: #fff;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#updateCancel {
+    width: 16px;
+    height: 16px;
+    background: #e7e7e7;
+    border-radius: 8px;
+    margin-left: 6px;
+    position: relative;
+    cursor: pointer;
+}
+
+.update_close {
+    width: 10px;
+    height: 10px;
+}
+
+#updateBtn {
+    background: #1296db;
+    color: #fff;
+    border-radius: 3px;
+    height: 18px;
+    line-height: 18px;
+    width: 60px;
+    font-size: 12px;
+    cursor: pointer;
+}

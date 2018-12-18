@@ -24,6 +24,10 @@ let remarkPopup = document.getElementById("remarkPopup");
 let myCollectionMask = document.getElementById("myCollectionMask");
 let myCollectionPopup = document.getElementById("myCollectionPopup");
 let myCollections = document.getElementById("myCollections");
+let update = document.getElementById("update");
+let updateBtn = document.getElementById("updateBtn");
+let updateCancel = document.getElementById("updateCancel");
+let updateInfo = document.getElementById("updateInfo");
 
 let lastClickTime = 0;
 let ips, downloadPort, uploadPort;
@@ -154,8 +158,16 @@ myCollectionMask.onclick = () => {
     myCollectionPopup.style.display = "none";
 };
 
+updateCancel.onclick = () => {
+    update.style.display = "none";
+};
+
+updateBtn.onclick = () => {
+    ipcRenderer.send("go-update");
+};
+
 mine.onclick = () => {
-    ipcRenderer.send("getCollections");
+    ipcRenderer.send("get-collections");
 };
 
 collect.onclick = () => {
@@ -347,6 +359,13 @@ ipcRenderer.on("files-path", (event, filesPath) => {
 
 ipcRenderer.on("show-type", (event, type) => {
     show(type);
+});
+
+ipcRenderer.on("auto-update-reply", (event, info) => {
+    if (info.hasNewVersion) {
+        updateInfo.innerText = info.msg;
+        update.style.display = "flex";
+    }
 });
 
 container.ondragstart = event => {
