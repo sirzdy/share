@@ -289,7 +289,7 @@ textarea {
     cursor: pointer;
     /* margin: 2px; */
     padding: 6px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
     /* border-radius: 3px; */
     background: #fff;
 }
