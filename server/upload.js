@@ -1,34 +1,30 @@
-const express = require('express');
-const bodyParser = require('body-parser')
-const multer = require('multer');
-const path = require('path');
+const express = require("express");
+const bodyParser = require("body-parser");
+const multer = require("multer");
+const path = require("path");
 const app = express();
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-const text = require('./text');
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const text = require("./text");
+const collect = require("./collect");
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 module.exports = {
     upload,
     io
-}
+};
 
 function upload(opts) {
-    let {
-        port,
-        downloadPort,
-        textPath,
-        root
-    } = opts;
+    let { port, downloadPort, collectionPath, textPath, root } = opts;
     return new Promise((resolve, reject) => {
         let storage = multer.diskStorage({
-            destination: function (req, file, cb) {
+            destination: function(req, file, cb) {
                 cb(null, root);
             },
-            filename: function (req, file, cb) {
+            filename: function(req, file, cb) {
                 cb(null, file.originalname);
             }
         });
@@ -36,18 +32,18 @@ function upload(opts) {
         let upload = multer({
             storage
         });
-        app.use(express.static(path.join(__dirname, 'web')));
+        app.use(express.static(path.join(__dirname, "web")));
         // app.get('/', (req, res) => {
         //     res.sendFile(path.join(__dirname, 'web/index.html'));
         // })
-        let up = upload.array('files');
-        app.post('/upload', function (req, res) {
-            up(req, res, function (err) {
+        let up = upload.array("files");
+        app.post("/upload", function(req, res) {
+            up(req, res, function(err) {
                 if (err) {
                     res.status(500).json({
                         error: err
-                    })
-                    return
+                    });
+                    return;
                 }
                 let files = req.files;
                 let rets = [];
@@ -58,25 +54,25 @@ function upload(opts) {
                 res.json({
                     rets
                 });
-            })
-        })
+            });
+        });
 
         // 获取下载端口
-        app.get('/getDownloadPort', function (req, res) {
+        app.get("/getDownloadPort", function(req, res) {
             res.json({
                 state: true,
                 downloadPort
             });
-        })
+        });
 
         // 添加文本记录
-        app.post('/addText', function (req, res) {
+        app.post("/addText", function(req, res) {
             let content = req.body.content;
             if (!content) {
                 res.json({
                     state: false,
-                    error: '内容不得为空'
-                })
+                    error: "内容不得为空"
+                });
             } else {
                 text.writeText(content, textPath).then(() => {
                     res.json({
@@ -84,35 +80,42 @@ function upload(opts) {
                     });
                 });
             }
-        })
+        });
 
         // 获取文本记录
-        app.get('/getTexts', function (req, res) {
-            text.readTexts(new Date(req.query.startDate), new Date(req.query.endDate), textPath).then((ret) => {
+        app.get("/getTexts", function(req, res) {
+            text.readTexts(
+                new Date(req.query.startDate),
+                new Date(req.query.endDate),
+                textPath
+            ).then(ret => {
                 let texts = ret.filter(x => x.res);
                 res.json({
                     state: true,
                     texts
-                })
-            })
-        })
-        app.get('/getCollections', function (req, res) {
-            text.readCollections(textPath).then((ret) => {
+                });
+            });
+        });
+
+        // 获取收藏
+        app.get("/getCollections", function(req, res) {
+            collect.getCollections(collectionPath).then(ret => {
                 res.json({
                     state: true,
-                    collections: ret.res
-                })
-            })
-        })
-        io.on('connection', function (socket) {
+                    collections: ret
+                });
+            });
+        });
+
+        io.on("connection", function(socket) {
             // console.log('a user connected');
             // socket.on('new message', function (msg) {
             //     console.log('message: ' + msg);
             // });
-            socket.on('disconnect', function () {
+            socket.on("disconnect", function() {
                 // console.log('user disconnected');
             });
         });
-        http.listen(port, () => resolve(port))
-    })
+        http.listen(port, () => resolve(port));
+    });
 }

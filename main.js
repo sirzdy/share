@@ -362,6 +362,7 @@ function createWindow() {
                 let uploadOpts = {
                     port: uploadPort,
                     downloadPort,
+                    collectionPath,
                     textPath,
                     root: uploadPath
                 };

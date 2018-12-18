@@ -307,7 +307,7 @@ ipcRenderer.on("get-collect-reply", (event, data) => {
             collection.className = "myCollection";
             collection.setAttribute("content", x[1]);
             let title = document.createElement("div");
-            title.innerText = "【" + x[2] + "】";
+            title.innerText = x[2];
             title.className = "title";
             let time = document.createElement("div");
             time.className = "time";
