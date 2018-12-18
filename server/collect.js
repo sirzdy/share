@@ -46,23 +46,30 @@ function getCollections(collectionPath) {
 
 function delCollections(content, collectionPath) {
     return new Promise((resolve, reject) => {
-        getCollections(collectionPath).then(res => {
-            let index = res.findIndex(x => !x[1] || x[1] === content);
-            index >= 0 && res.splice(index, 1);
-            if (!res.length) res = null;
-            let options = {
-                headers: true,
-                includeEndRowDelimiter: true
-            };
-            var stream = fs.createWriteStream(collectionPath, {
-                encoding: "utf8",
-                flags: "w+"
+        getCollections(collectionPath)
+            .then(res => {
+                let index = res.findIndex(x => !x[1] || x[1] === content);
+                index >= 0 && res.splice(index, 1);
+                if (!res.length) {
+                    fs.unlink(collectionPath, err => {
+                        if (err) throw err;
+                        resolve({ state: true });
+                    });
+                    return;
+                }
+                let options = {
+                    headers: true,
+                    includeEndRowDelimiter: true
+                };
+                var stream = fs.createWriteStream(collectionPath, {
+                    encoding: "utf8",
+                    flags: "w+"
+                });
+                csv.write(res, options).pipe(stream);
+                stream.on("finish", () => {
+                    resolve({ state: true });
+                });
             });
-            csv.write(res, options).pipe(stream);
-            stream.on("finish", () => {
-                resolve({ state: true });
-            });
-        });
     });
 }
 
