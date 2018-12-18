@@ -270,6 +270,7 @@ textarea {
     overflow: auto;
     padding: 10px;
     overflow-x: hidden;
+    word-wrap: break-word;
     white-space: break-all;
 }
 
