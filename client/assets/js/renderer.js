@@ -324,8 +324,8 @@ ipcRenderer.on("get-collect-reply", (event, data) => {
             copyImg.className = "copy";
             copyImg.src = "../client/assets/img/copy.svg";
             collection.appendChild(title);
-            collection.appendChild(time);
             collection.appendChild(content);
+            collection.appendChild(time);
             collection.appendChild(deleteImg);
             collection.appendChild(copyImg);
             collection.onclick = select;

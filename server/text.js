@@ -58,6 +58,27 @@ function readTexts(startDate, endDate, textPath) {
     }));
 }
 
+function readCollections(textPath) {
+    let texts = [];
+    let fileName = path.join(textPath, 'collections.csv');
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(fileName)) {
+            resolve({ res: null });
+        } else {
+            csv
+                .fromPath(fileName)
+                .on("data", function (data) {
+                    texts.push(data);
+                })
+                .on("end", function () {
+                    resolve({ res: texts });
+                })
+                .on("error", function (e) {
+                    resolve({ res: [] });
+                });
+        }
+    })
+}
 // writeText('123').then(()=>{
 //     console.log('finish');
 // });
@@ -68,6 +89,7 @@ function readTexts(startDate, endDate, textPath) {
 
 module.exports = {
     writeText,
-    readTexts
+    readTexts,
+    readCollections
 }
 

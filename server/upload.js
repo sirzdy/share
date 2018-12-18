@@ -96,6 +96,14 @@ function upload(opts) {
                 })
             })
         })
+        app.get('/getCollections', function (req, res) {
+            text.readCollections(textPath).then((ret) => {
+                res.json({
+                    state: true,
+                    collections: ret.res
+                })
+            })
+        })
         io.on('connection', function (socket) {
             // console.log('a user connected');
             // socket.on('new message', function (msg) {

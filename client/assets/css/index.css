@@ -299,6 +299,7 @@ textarea {
     display: block;
     line-height: 28px;
     font-size: 20px;
+    text-align: center;
 }
 
 .time {
@@ -313,6 +314,7 @@ textarea {
     display: block;
     line-height: 16px;
     font-size: 14px;
+    margin: 10px 0;
 }
 
 .copy {
@@ -320,7 +322,7 @@ textarea {
     width: 20px;
     height: 20px;
     right: 10px;
-    top: 10px;
+    bottom: 10px;
 }
 
 .delete {
@@ -328,7 +330,7 @@ textarea {
     width: 20px;
     height: 20px;
     right: 40px;
-    top: 10px;
+    bottom: 10px;
 }
 
 .close_footer {
