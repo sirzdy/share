@@ -46,6 +46,7 @@ textarea {
     flex-direction: column;
     justify-content: center;
     text-align: center;
+    overflow: hidden;
 }
 
 
@@ -267,6 +268,9 @@ textarea {
 #myCollections {
     width: 100%;
     overflow: auto;
+    padding: 10px;
+    overflow-x: hidden;
+    white-space: break-all;
 }
 
 #mine{
