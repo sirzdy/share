@@ -270,7 +270,7 @@ textarea {
 }
 
 #myCollections {
-    background: #eee;
+    background: #e7e7e7;
     width: 100%;
     overflow: auto;
     overflow-x: hidden;
@@ -285,13 +285,16 @@ textarea {
 }
 
 .myCollection {
+    background: #fff;
     position: relative;
     cursor: pointer;
-    /* margin: 2px; */
     padding: 6px;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    /* border-radius: 3px; */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
     background: #fff;
+}
+
+.myCollection:last-child {
+    border-bottom: none;
 }
 
 .title {
@@ -299,7 +302,7 @@ textarea {
     display: block;
     line-height: 28px;
     font-size: 20px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
 .time {
