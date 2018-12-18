@@ -45,6 +45,7 @@ const defaultPath = path.join(os.homedir(), "Documents", "files");
 let type = null;
 const defaultType = 1;
 const isDev = false;
+const localVersion = '3.0.0'
 
 let filesPath = defaultPath;
 let uploadPath;
@@ -470,9 +471,9 @@ function goUpdate() {
 }
 
 function update() {
-    let localRawInfo = fs.readFileSync("package.json", "utf8");
-    let localInfo = JSON.parse(localRawInfo);
-    let localVersion = localInfo.version;
+    // let localRawInfo = fs.readFileSync("package.json", "utf8");
+    // let localInfo = JSON.parse(localRawInfo);
+    // let localVersion = localInfo.version;
     let url =
         "https://raw.githubusercontent.com/sirzdy/share/master/package.json";
     return new Promise((resolve, reject) => {
