@@ -1,22 +1,28 @@
-const fs = require('fs');
+const fs = require("fs");
 var csv = require("fast-csv");
 
 function addCollections(content, remark, collectionPath) {
-    let date = new Date();
-    let arr = [[date.valueOf(), content, remark]];
-    let options = {
-        headers: true,
-        includeEndRowDelimiter: true
-    };
     return new Promise((resolve, reject) => {
-        var stream = fs.createWriteStream(collectionPath, { encoding: "utf8", flags: 'a+' });
-        csv.write(arr, options).pipe(stream);
-        stream.on('finish', () => {
-            resolve({ state: true })
+        getCollections(collectionPath).then(res => {
+            let index = res.findIndex(x => x[1] === content);
+            index >= 0 && res.splice(index, 1);
+            let date = new Date();
+            res.push([date.valueOf(), content, remark]);
+            let options = {
+                headers: true,
+                includeEndRowDelimiter: true
+            };
+            var stream = fs.createWriteStream(collectionPath, {
+                encoding: "utf8",
+                flags: "w+"
+            });
+            csv.write(res, options).pipe(stream);
+            stream.on("finish", () => {
+                resolve({ state: true });
+            });
         });
-    })
+    });
 }
-
 
 function getCollections(collectionPath) {
     let collections = [];
@@ -24,22 +30,44 @@ function getCollections(collectionPath) {
         if (!fs.existsSync(collectionPath)) {
             resolve([]);
         } else {
-            csv
-                .fromPath(collectionPath)
-                .on("data", function (data) {
+            csv.fromPath(collectionPath)
+                .on("data", function(data) {
                     collections.push(data);
                 })
-                .on("end", function () {
+                .on("end", function() {
                     resolve(collections);
                 })
-                .on("error", function (e) {
+                .on("error", function(e) {
                     resolve([]);
                 });
         }
-    })
+    });
+}
+
+function delCollections(content, collectionPath) {
+    return new Promise((resolve, reject) => {
+        getCollections(collectionPath).then(res => {
+            let index = res.findIndex(x => !x[1] || x[1] === content);
+            index >= 0 && res.splice(index, 1);
+            if (!res.length) res = null;
+            let options = {
+                headers: true,
+                includeEndRowDelimiter: true
+            };
+            var stream = fs.createWriteStream(collectionPath, {
+                encoding: "utf8",
+                flags: "w+"
+            });
+            csv.write(res, options).pipe(stream);
+            stream.on("finish", () => {
+                resolve({ state: true });
+            });
+        });
+    });
 }
 
 module.exports = {
     getCollections,
-    addCollections
-}
+    addCollections,
+    delCollections
+};

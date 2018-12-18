@@ -10,29 +10,36 @@ const {
     ipcMain,
     dialog,
     shell
-} = require('electron');
-const settings = require('electron-settings');
+} = require("electron");
+const settings = require("electron-settings");
 const path = require("path");
-const fs = require('fs');
-const os = require('os');
-var c = require('child_process');
+const fs = require("fs");
+const os = require("os");
+var c = require("child_process");
 
-const { download } = require('./server/download');
-const { upload, io } = require('./server/upload');
-const { getPort } = require('./server/port');
-const { getIp } = process.platform === 'darwin' ? require('./server/ip-mac') : require('./server/ip-windows');
-const { copy } = require('./server/file');
-const { writeText } = require('./server/text');
-const { addCollections, getCollections } = require('./server/collect');
+const { download } = require("./server/download");
+const { upload, io } = require("./server/upload");
+const { getPort } = require("./server/port");
+const { getIp } =
+    process.platform === "darwin"
+        ? require("./server/ip-mac")
+        : require("./server/ip-windows");
+const { copy } = require("./server/file");
+const { writeText } = require("./server/text");
+const {
+    addCollections,
+    getCollections,
+    delCollections
+} = require("./server/collect");
 
-const gotTheLock = app.requestSingleInstanceLock()
+const gotTheLock = app.requestSingleInstanceLock();
 
 /* 起始端口号 */
 const basePort = 1225;
 /* 主页 */
-const index = './client/index.html';
+const index = "./client/index.html";
 /* 默认路径, 实际路径 */
-const defaultPath = path.join(os.homedir(), 'Documents', 'files');
+const defaultPath = path.join(os.homedir(), "Documents", "files");
 /* 默认类型，仅显示无线网 */
 let type = null;
 const defaultType = 1;
@@ -44,8 +51,6 @@ let downloadPath;
 let textPath;
 let collectionPath;
 
-
-
 let mainWindow = null;
 let tray = null;
 
@@ -53,18 +58,18 @@ function createWindow() {
     let settingPath = null;
     let settingType = null;
     try {
-        settingPath = settings.get('path');
-        settingType = settings.get('type');
+        settingPath = settings.get("path");
+        settingType = settings.get("type");
     } catch (err) {
         console.log(err);
         // throw err;
     }
     /* 目录 */
     filesPath = settingPath || defaultPath;
-    downloadPath = path.join(filesPath, 'download');
-    uploadPath = path.join(filesPath, 'upload');
-    textPath = path.join(filesPath, 'text');
-    collectionPath = path.join(textPath, 'collections.csv');
+    downloadPath = path.join(filesPath, "download");
+    uploadPath = path.join(filesPath, "upload");
+    textPath = path.join(filesPath, "text");
+    collectionPath = path.join(textPath, "collections.csv");
     [filesPath, downloadPath, uploadPath, textPath].forEach(mkdir);
     /* 类型 */
     type = settingType || defaultType;
@@ -76,239 +81,366 @@ function createWindow() {
         show: false,
         resizable: false,
         alwaysOnTop: false,
-        frame: false,
+        frame: true,
         // titleBarStyle: 'hidden',
-        transparent: true
-    })
+        transparent: false
+    });
 
     mainWindow.loadFile(index);
     // 图标
-    let icon = nativeImage.createFromPath(path.join(__dirname, 'icon.png'));
-    if (process.platform !== 'darwin') {
+    let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
+    if (process.platform !== "darwin") {
         mainWindow.setIcon(icon);
     }
     // Open the DevTools.
     isDev && mainWindow.webContents.openDevTools();
     // 修复mac下无法复制粘贴等问题
-    let template = [{
-        label: "Application",
-        submenu: [
-            { label: "关于", selector: "orderFrontStandardAboutPanel:" },
-            { type: "separator" },
-            { label: "退出", accelerator: "Command+Q", click: function () { app.quit(); } }
-        ]
-    }, {
-        label: "编辑",
-        submenu: [
-            { label: "撤销", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-            { label: "恢复", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-            { type: "separator" },
-            { label: "剪切", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-            { label: "复制", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-            { label: "粘贴", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-            { label: "全选", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-        ]
-    }, {
-        label: "功能",
-        submenu: [
-            { label: "发送剪贴板", accelerator: "CmdOrCtrl+Alt+C", click: function () { sendClipboard(); } },
-            { label: "重启", accelerator: "CmdOrCtrl+R", click: restart }
-        ]
-    }];
+    let template = [
+        {
+            label: "Application",
+            submenu: [
+                { label: "关于", selector: "orderFrontStandardAboutPanel:" },
+                { type: "separator" },
+                {
+                    label: "退出",
+                    accelerator: "Command+Q",
+                    click: function() {
+                        app.quit();
+                    }
+                }
+            ]
+        },
+        {
+            label: "编辑",
+            submenu: [
+                {
+                    label: "撤销",
+                    accelerator: "CmdOrCtrl+Z",
+                    selector: "undo:"
+                },
+                {
+                    label: "恢复",
+                    accelerator: "Shift+CmdOrCtrl+Z",
+                    selector: "redo:"
+                },
+                { type: "separator" },
+                { label: "剪切", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+                {
+                    label: "复制",
+                    accelerator: "CmdOrCtrl+C",
+                    selector: "copy:"
+                },
+                {
+                    label: "粘贴",
+                    accelerator: "CmdOrCtrl+V",
+                    selector: "paste:"
+                },
+                {
+                    label: "全选",
+                    accelerator: "CmdOrCtrl+A",
+                    selector: "selectAll:"
+                }
+            ]
+        },
+        {
+            label: "功能",
+            submenu: [
+                {
+                    label: "发送剪贴板",
+                    accelerator: "CmdOrCtrl+Alt+C",
+                    click: function() {
+                        sendClipboard();
+                    }
+                },
+                { label: "重启", accelerator: "CmdOrCtrl+R", click: restart }
+            ]
+        }
+    ];
     // 菜单
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 
     // 托盘
-    if (process.platform !== 'darwin') {
+    if (process.platform !== "darwin") {
         tray = new Tray(icon);
     } else {
-        tray = new Tray(nativeImage.createFromPath(path.join(__dirname, 'tray.png')));
+        tray = new Tray(
+            nativeImage.createFromPath(path.join(__dirname, "tray.png"))
+        );
     }
-    let contextMenu = Menu.buildFromTemplate([
+    const contextMenu = Menu.buildFromTemplate([
         {
-            label: '打开窗口',
-            click() { open() }
-        }, {
-            type: 'separator'
-        }, {
-            label: '发送剪贴板',
-            click() { sendClipboard() }
-        }, {
-            type: 'separator'
-        }, {
-            label: '设置目录',
-            click() { setFilesPath() }
-        }, {
-            label: '设置网络',
-            type: 'submenu',
+            label: "打开窗口",
+            click() {
+                open();
+            }
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "发送剪贴板",
+            click() {
+                sendClipboard();
+            }
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "设置目录",
+            click() {
+                setFilesPath();
+            }
+        },
+        {
+            label: "设置网络",
+            type: "submenu",
             submenu: [
                 {
-                    label: '全部',
-                    type: 'radio',
+                    label: "全部",
+                    type: "radio",
                     checked: false,
-                    click() { setShowType(0) }
+                    click() {
+                        setShowType(0);
+                    }
                 },
                 {
-                    label: '无线网',
-                    type: 'radio',
+                    label: "无线网",
+                    type: "radio",
                     checked: true,
-                    click() { setShowType(1) }
+                    click() {
+                        setShowType(1);
+                    }
                 },
                 {
-                    label: '有线网',
-                    type: 'radio',
+                    label: "有线网",
+                    type: "radio",
                     checked: false,
-                    click() { setShowType(2) }
-                },
+                    click() {
+                        setShowType(2);
+                    }
+                }
             ]
-        }, {
-            type: 'separator'
-        }, {
-            label: '查看帮助',
-            click() { help() }
-        }, {
-            label: '意见反馈',
-            click() { feedback() }
-        }, {
-            type: 'separator'
-        }, {
-            label: '重新启动',
-            click() { restart() }
-        }, {
-            label: '退出程序',
-            role: 'quit'
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "查看帮助",
+            click() {
+                help();
+            }
+        },
+        {
+            label: "意见反馈",
+            click() {
+                feedback();
+            }
+        },
+        {
+            type: "separator"
+        },
+        {
+            label: "重新启动",
+            click() {
+                restart();
+            }
+        },
+        {
+            label: "退出程序",
+            click() {
+                quit();
+            }
         }
-    ])
+    ]);
     tray.setContextMenu(contextMenu);
-    tray.setToolTip('文件传输工具');
-    tray.on('click', () => {
+    tray.setToolTip("文件传输工具");
+    tray.on("click", () => {
         open();
     });
 
     /* 事件处理 */
-    ipcMain.on('quit', (event, arg) => {
-        if (process.platform !== 'darwin') {
-            mainWindow.hide();
-        } else {
-            mainWindow.minimize();
-        }
+    ipcMain.on("quit", (event, arg) => {
+        minimize();
     });
 
     /* 打开目录 */
-    ipcMain.on('open', (event, arg) => {
+    ipcMain.on("open", (event, arg) => {
         shell.openItem(filesPath);
     });
 
     /* 打开链接 */
-    ipcMain.on('link', (event, link) => {
+    ipcMain.on("link", (event, link) => {
         shell.openExternal(link);
     });
 
     /* 收藏 */
-    ipcMain.on('collect', (event, content, remark) => {
-        addCollections(content, remark, collectionPath).then(() => {
-            event.sender.send('collect-reply', true);
-        }).catch((err) => {
-            console.log(err)
-            event.sender.send('collect-reply', false);
-        });
+    ipcMain.on("collect", (event, content, remark) => {
+        addCollections(content, remark, collectionPath)
+            .then(() => {
+                event.sender.send("collect-reply", true);
+            })
+            .catch(err => {
+                console.log(err);
+                event.sender.send("collect-reply", false);
+            });
     });
 
-    ipcMain.on('copy-clipboard', (event, content) => {
+    /* 收藏 */
+    ipcMain.on("delete-collection", (event, content, remark) => {
+        delCollections(content, collectionPath)
+            .then(() => {
+                event.sender.send("delete-collection-reply", true);
+            })
+            .catch(err => {
+                console.log(err);
+                event.sender.send("delete-collection-reply", false);
+            });
+    });
+
+    /* 拷贝 */
+    ipcMain.on("copy-clipboard", (event, content) => {
         clipboard.writeText(content);
-        event.sender.send('copy-clipboard-reply', true);
+        event.sender.send("copy-clipboard-reply", true);
     });
 
     /* 查询收藏 */
-    ipcMain.on('getCollections', (event, content, remark) => {
-        getCollections(collectionPath).then((data) => {
-            event.sender.send('get-collect-reply', data);
-        }).catch((err) => {
-            console.log(err)
-            event.sender.send('get-collect-reply', false);
-        });
+    ipcMain.on("getCollections", (event, content, remark) => {
+        getCollections(collectionPath)
+            .then(data => {
+                event.sender.send("get-collect-reply", data);
+            })
+            .catch(err => {
+                console.log(err);
+                event.sender.send("get-collect-reply", false);
+            });
     });
 
     /* 传输文本 */
-    ipcMain.on('send', (event, content) => {
+    ipcMain.on("send", (event, content) => {
         // shell.openExternal(link);
-        io.emit('new message', content);
-        writeText(content, textPath).then(() => {
-            event.sender.send('send-reply', true);
-        }).catch((err) => {
-            console.log(err)
-            event.sender.send('send-reply', false);
-        });
+        io.emit("new message", content);
+        writeText(content, textPath)
+            .then(() => {
+                event.sender.send("send-reply", true);
+            })
+            .catch(err => {
+                console.log(err);
+                event.sender.send("send-reply", false);
+            });
     });
 
     /* 上传文件 */
-    ipcMain.on('copy', (event, files) => {
-        Promise.all(files.map((file) =>
-            copy(file, downloadPath)
-        )).then((ret) => {
-            io.emit('new files', ret);
-            event.sender.send('copy-reply', ret);
-        }).catch((err) => {
-            console.log(err);
-        });
+    ipcMain.on("copy", (event, files) => {
+        Promise.all(files.map(file => copy(file, downloadPath)))
+            .then(ret => {
+                io.emit("new files", ret);
+                event.sender.send("copy-reply", ret);
+            })
+            .catch(err => {
+                console.log(err);
+            });
     });
 
     /* 开启服务器 */
-    ipcMain.on('start', (event, arg) => {
-        event.sender.send('files-path', filesPath);
-        getPort(basePort, 2).then((ports) => {
-            let [uploadPort, downloadPort] = ports;
-            let downloadOpts = {
-                port: downloadPort,
-                root: downloadPath
-            }
-            let uploadOpts = {
-                port: uploadPort,
-                downloadPort,
-                textPath,
-                root: uploadPath
-            }
-            Promise.all([getIp(), download(downloadOpts), upload(uploadOpts)]).then((values) => {
-                event.sender.send('start-reply', [...values, type]);
-                let [{ ips, wirelessIps }, downloadRetPort, uploadRetPort] = values;
-                let wiredIps = [];
-                ips.forEach((ip) => {
-                    if (wirelessIps.indexOf(ip) < 0) {
-                        wiredIps.push(ip);
-                    }
-                })
-                console.log('Download:');
-                wirelessIps.length && wirelessIps.forEach((x) => {
-                    console.log('[wireless]', 'http://' + x + ':' + downloadRetPort);
-                })
-                wiredIps.length && wiredIps.forEach((x) => {
-                    console.log('[wired]', 'http://' + x + ':' + downloadRetPort);
-                })
-                console.log('Upload:');
-                wirelessIps.length && wirelessIps.forEach((x) => {
-                    console.log('[wireless]', 'http://' + x + ':' + uploadRetPort);
-                })
-                wiredIps.length && wiredIps.forEach((x) => {
-                    console.log('[wired]', 'http://' + x + ':' + uploadRetPort);
-                })
+    ipcMain.on("start", (event, arg) => {
+        event.sender.send("files-path", filesPath);
+        if (app.values) {
+            event.sender.send("start-reply", [...app.values, type]);
+            return;
+        }
+        getPort(basePort, 2)
+            .then(ports => {
+                let [uploadPort, downloadPort] = ports;
+                let downloadOpts = {
+                    port: downloadPort,
+                    root: downloadPath
+                };
+                let uploadOpts = {
+                    port: uploadPort,
+                    downloadPort,
+                    textPath,
+                    root: uploadPath
+                };
+                Promise.all([
+                    getIp(),
+                    download(downloadOpts),
+                    upload(uploadOpts)
+                ]).then(values => {
+                    app.values = values;
+                    event.sender.send("start-reply", [...values, type]);
+                    let [
+                        { ips, wirelessIps },
+                        downloadRetPort,
+                        uploadRetPort
+                    ] = values;
+                    let wiredIps = [];
+                    ips.forEach(ip => {
+                        if (wirelessIps.indexOf(ip) < 0) {
+                            wiredIps.push(ip);
+                        }
+                    });
+                    console.log("Download:");
+                    wirelessIps.length &&
+                        wirelessIps.forEach(x => {
+                            console.log(
+                                "[wireless]",
+                                "http://" + x + ":" + downloadRetPort
+                            );
+                        });
+                    wiredIps.length &&
+                        wiredIps.forEach(x => {
+                            console.log(
+                                "[wired]",
+                                "http://" + x + ":" + downloadRetPort
+                            );
+                        });
+                    console.log("Upload:");
+                    wirelessIps.length &&
+                        wirelessIps.forEach(x => {
+                            console.log(
+                                "[wireless]",
+                                "http://" + x + ":" + uploadRetPort
+                            );
+                        });
+                    wiredIps.length &&
+                        wiredIps.forEach(x => {
+                            console.log(
+                                "[wired]",
+                                "http://" + x + ":" + uploadRetPort
+                            );
+                        });
+                });
             })
-        }).catch((err) => {
-            throw err;
-        });
+            .catch(err => {
+                throw err;
+            });
     });
 
-    mainWindow.once('ready-to-show', () => {
+    mainWindow.once("ready-to-show", () => {
         mainWindow.show();
     });
 
-    mainWindow.on('closed', function () {
+    mainWindow.on("minimize", function(event) {
+        event.preventDefault();
+        minimize();
+    });
+
+    // mainWindow.on("close", function(event) {
+    //     if (!app.isQuiting) {
+    //         event.preventDefault();
+    //         minimize();
+    //     }
+    // });
+
+    mainWindow.on("closed", function() {
         mainWindow = null;
     });
 
     /* 注册剪贴板事件 */
-    globalShortcut.register('CommandOrControl+Alt+C', function () {
+    globalShortcut.register("CommandOrControl+Alt+C", function() {
         sendClipboard();
-    })
+    });
 }
 
 /* 创建目录 */
@@ -318,16 +450,20 @@ function mkdir(path) {
 
 /* 设置网络类型 0 全部 1 仅无限网 2 仅有线网 */
 function setShowType(type) {
-    mainWindow.webContents.send('show-type', type);
-    settings.set('type', type);
+    mainWindow.webContents.send("show-type", type);
+    settings.set("type", type);
 }
 
 /* 设置目录 */
 function setFilesPath() {
-    let path = dialog.showOpenDialog({ title: '请选择共享目录', defaultPath: filesPath, properties: ['openFile', 'openDirectory'] });
+    let path = dialog.showOpenDialog({
+        title: "请选择共享目录",
+        defaultPath: filesPath,
+        properties: ["openFile", "openDirectory"]
+    });
     if (!path) return;
     if (path[0] === filesPath) return;
-    settings.set('path', path[0]);
+    settings.set("path", path[0]);
     restart();
 }
 
@@ -338,38 +474,37 @@ function open() {
     mainWindow.focus();
 }
 
-
 /* 发送剪贴板内容 */
 function sendClipboard() {
     let content = clipboard.readText();
     if (!content) {
         dialog.showMessageBox({
-            type: 'info',
-            message: '发送失败',
-            detail: '剪贴板不含文本或剪贴板为空',
-            buttons: ['OK']
-        })
+            type: "info",
+            message: "发送失败",
+            detail: "剪贴板不含文本或剪贴板为空",
+            buttons: ["OK"]
+        });
         return;
     }
-    io.emit('new message', content);
-    writeText(content, textPath).then(() => {
-        // dialog.showMessageBox({
-        //     type: 'info',
-        //     message: '剪贴板内容发送成功!',
-        //     detail: content,
-        //     buttons: ['OK']
-        // })
-    }).catch((err) => {
-        console.log(err)
-        dialog.showMessageBox({
-            type: 'info',
-            message: '剪贴板内容发送失败!',
-            detail: content,
-            buttons: ['OK']
+    io.emit("new message", content);
+    writeText(content, textPath)
+        .then(() => {
+            // dialog.showMessageBox({
+            //     type: 'info',
+            //     message: '剪贴板内容发送成功!',
+            //     detail: content,
+            //     buttons: ['OK']
+            // })
         })
-    });
+        .catch(err => {
+            dialog.showMessageBox({
+                type: "info",
+                message: "剪贴板内容发送失败!",
+                detail: content,
+                buttons: ["OK"]
+            });
+        });
 }
-
 
 /* 重启 */
 function restart() {
@@ -379,46 +514,62 @@ function restart() {
 
 /* 退出 */
 function quit() {
+    // app.isQuiting = true;
     app.quit();
+}
+
+/* 最小化 */
+function minimize() {
+    if (process.platform !== "darwin") {
+        mainWindow.hide();
+    } else {
+        mainWindow.minimize();
+    }
+    mainWindow.setSkipTaskbar(true);
 }
 
 /* 查看帮助 */
 function help() {
-    const github = 'https://github.com/sirzdy/share';
+    const github = "https://github.com/sirzdy/share";
     shell.openExternal(github);
 }
 
 /* 意见反馈 */
 function feedback() {
-    const githubIssues = 'https://github.com/sirzdy/share/issues';
+    const githubIssues = "https://github.com/sirzdy/share/issues";
     shell.openExternal(githubIssues);
 }
 
 /* 只允许一个实例 */
 if (!gotTheLock) {
-    app.quit()
+    app.quit();
 } else {
-    app.on('second-instance', (event, commandLine, workingDirectory) => {
+    app.on("second-instance", (event, commandLine, workingDirectory) => {
         // Someone tried to run a second instance, we should focus our window.
         if (mainWindow) {
             if (mainWindow.isMinimized()) mainWindow.restore();
             if (!mainWindow.isVisible()) mainWindow.show();
             mainWindow.focus();
         }
-    })
+    });
 
     // Create mainWindow, load the rest of the app, etc...
-    app.on('ready', createWindow)
+    app.on("ready", createWindow);
 }
 
-app.on('window-all-closed', function () {
-    if (process.platform !== 'darwin') {
+app.on("window-all-closed", function() {
+    if (process.platform !== "darwin") {
         quit();
     }
-})
+});
 
-app.on('activate', function () {
+app.on("will-quit", function() {
+    globalShortcut.unregisterAll();
+    mainWindow = null;
+});
+
+app.on("activate", function() {
     if (mainWindow === null) {
         createWindow();
     }
-})
+});

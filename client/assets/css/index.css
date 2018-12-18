@@ -16,8 +16,8 @@ body {
     /* -webkit-app-region: drag; */
     -webkit-user-select: none;
 }
-::-webkit-input-placeholder{
-    color:#ccc;
+::-webkit-input-placeholder {
+    color: #ccc;
     font-size: 12px;
 }
 input[type="submit"],
@@ -30,25 +30,28 @@ textarea {
 }
 
 #container {
-    left: 2px;
-    top: 2px;
-    right: 2px;
-    bottom: 2px;
+    /* left: 1px;
+    top: 1px;
+    right: 1px;
+    bottom: 1px; */
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     background-color: #fff;
     position: absolute;
-    -webkit-transition: -webkit-transform .6s ease-in-out;
-    transition: transform .6s ease-in-out;
+    -webkit-transition: -webkit-transform 0.6s ease-in-out;
+    transition: transform 0.6s ease-in-out;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     /* border-radius: 10px; */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
     overflow: hidden;
 }
-
 
 .title_bar {
     height: 40px;
@@ -63,7 +66,6 @@ textarea {
     justify-content: flex-start;
     text-align: center;
 }
-
 
 .title_bar_drag {
     flex: 1;
@@ -118,13 +120,13 @@ textarea {
     color: #333;
 }
 
-
 .current {
     color: #000 !important;
     font-weight: bold;
 }
 /* 发送文字 */
-#text, #qrtext{
+#text,
+#qrtext {
     height: 60px;
     display: flex;
     flex-direction: row;
@@ -132,7 +134,8 @@ textarea {
     text-align: center;
     border-top: 1px solid #eee;
 }
-#content, #qrcontent{
+#content,
+#qrcontent {
     max-height: 60px;
     width: 100%;
     flex: 1;
@@ -143,7 +146,8 @@ textarea {
     background: transparent;
     font-family: Microsoft Yahei;
 }
-#send, #generate{
+#send,
+#generate {
     width: 45px;
     height: 100%;
     line-height: 60px;
@@ -154,13 +158,13 @@ textarea {
     height: 40px;
     display: flex;
     flex-direction: row;
-    padding:8px 0;
+    padding: 8px 0;
     line-height: 24px;
     background-color: #ddd;
     cursor: pointer;
 }
 
-#dir{
+#dir {
     font-size: 10px;
 }
 
@@ -241,13 +245,13 @@ textarea {
 
 #open {
     display: flex;
-    flex:5;
+    flex: 5;
     flex-direction: row;
     align-items: center;
     justify-content: center;
 }
 #col {
-    flex:1;
+    flex: 1;
     flex-direction: row;
     align-items: center;
     justify-content: center;
@@ -266,16 +270,16 @@ textarea {
 }
 
 #myCollections {
+    background: #eee;
     width: 100%;
     overflow: auto;
-    padding: 10px;
     overflow-x: hidden;
     word-wrap: break-word;
     white-space: break-all;
 }
 
-#mine{
-    flex:3;
+#mine {
+    flex: 3;
     padding: 0 5px;
     border-right: 1px solid #000;
 }
@@ -283,11 +287,11 @@ textarea {
 .myCollection {
     position: relative;
     cursor: pointer;
-    margin:2px;
-    padding:2px;
-    border:2px solid #000;
-    border-radius:3px;
-    background:#fff;
+    /* margin: 2px; */
+    padding: 6px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    /* border-radius: 3px; */
+    background: #fff;
 }
 
 .title {
@@ -319,7 +323,15 @@ textarea {
     top: 10px;
 }
 
-.close_footer{
+.delete {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 40px;
+    top: 10px;
+}
+
+.close_footer {
     height: 40px;
     line-height: 40px;
     color: #fff;
