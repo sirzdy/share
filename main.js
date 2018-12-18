@@ -428,13 +428,11 @@ function createWindow() {
     });
 
     mainWindow.on("close", function(event) {
-        // if (!app.isQuiting) {
-        //     event.preventDefault();
-        //     minimize();
-        // }
         if (process.platform !== "darwin") {
-            event.preventDefault();
-            minimize();
+            if (!app.isQuiting) {
+                event.preventDefault();
+                minimize();
+            }
         }
     });
 
@@ -519,7 +517,9 @@ function restart() {
 
 /* 退出 */
 function quit() {
-    // app.isQuiting = true;
+    if (process.platform !== "darwin") {
+        app.isQuiting = true;
+    }
     app.quit();
 }
 
