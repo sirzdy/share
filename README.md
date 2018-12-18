@@ -123,7 +123,7 @@ npm start
 npm run dist
 ```
 
-[客户端源码-Github](https://github.com/sirzdy/share)
+[移动端源码-Github](https://github.com/sirzdy/share-app)
 
 ## 技术点
 
