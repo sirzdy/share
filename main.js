@@ -427,12 +427,16 @@ function createWindow() {
         minimize();
     });
 
-    // mainWindow.on("close", function(event) {
-    //     if (!app.isQuiting) {
-    //         event.preventDefault();
-    //         minimize();
-    //     }
-    // });
+    mainWindow.on("close", function(event) {
+        // if (!app.isQuiting) {
+        //     event.preventDefault();
+        //     minimize();
+        // }
+        if (process.platform !== "darwin") {
+            event.preventDefault();
+            minimize();
+        }
+    });
 
     mainWindow.on("closed", function() {
         mainWindow = null;
