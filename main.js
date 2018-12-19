@@ -55,6 +55,7 @@ let collectionPath;
 
 let mainWindow = null;
 let tray = null;
+let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
 
 function startApp() {
     let settingPath = null;
@@ -446,7 +447,6 @@ function createWindow() {
 
     mainWindow.loadFile(index);
     // 图标
-    let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
     if (process.platform !== "darwin") {
         mainWindow.setIcon(icon);
     }
