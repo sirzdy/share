@@ -44,7 +44,7 @@ const defaultPath = path.join(os.homedir(), "Documents", "files");
 /* 默认类型，仅显示无线网 */
 let type = null;
 const defaultType = 1;
-const isDev = true;
+const isDev = false;
 const localVersion = "3.1.0";
 
 let filesPath = defaultPath;
