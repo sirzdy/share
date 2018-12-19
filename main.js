@@ -45,7 +45,7 @@ const defaultPath = path.join(os.homedir(), "Documents", "files");
 let type = null;
 const defaultType = 1;
 const isDev = true;
-const localVersion = "3.0.0";
+const localVersion = "3.1.0";
 
 let filesPath = defaultPath;
 let uploadPath;
