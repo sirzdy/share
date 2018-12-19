@@ -44,8 +44,8 @@ const defaultPath = path.join(os.homedir(), "Documents", "files");
 /* 默认类型，仅显示无线网 */
 let type = null;
 const defaultType = 1;
-const isDev = false;
-const localVersion = '3.0.0'
+const isDev = true;
+const localVersion = "3.0.0";
 
 let filesPath = defaultPath;
 let uploadPath;
@@ -56,7 +56,7 @@ let collectionPath;
 let mainWindow = null;
 let tray = null;
 
-function createWindow() {
+function startApp() {
     let settingPath = null;
     let settingType = null;
     try {
@@ -76,30 +76,7 @@ function createWindow() {
     /* 类型 */
     type = settingType || defaultType;
 
-    width = isDev ? 900 : 300;
-    mainWindow = new BrowserWindow({
-        width,
-        height: 650,
-        show: false,
-        resizable: false,
-        alwaysOnTop: false,
-        frame: true,
-        // titleBarStyle: 'hidden',
-        transparent: false,
-        autoHideMenuBar: true,
-        skipTaskbar: true
-    });
-
-    mainWindow.loadFile(index);
-    mainWindow.setSkipTaskbar(true);
-    // 图标
-    let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
-    if (process.platform !== "darwin") {
-        mainWindow.setIcon(icon);
-    }
-    // Open the DevTools.
-    isDev && mainWindow.webContents.openDevTools();
-    // 修复mac下无法复制粘贴等问题
+    // 修复无法复制粘贴等问题
     let template = [
         {
             label: "Application",
@@ -110,7 +87,7 @@ function createWindow() {
                     label: "退出",
                     accelerator: "Command+Q",
                     click: function() {
-                        app.quit();
+                        quit();
                     }
                 }
             ]
@@ -275,6 +252,13 @@ function createWindow() {
         minimize();
     });
 
+    /* 上传文件 */
+    ipcMain.on("top", (event) => {
+        setAlwaysOnTop().then((flag)=>{
+            event.sender.send("top-reply", flag);
+        });
+    });
+
     /* 打开目录 */
     ipcMain.on("open", (event, arg) => {
         shell.openItem(filesPath);
@@ -437,6 +421,38 @@ function createWindow() {
         });
     });
 
+    /* 注册剪贴板事件 */
+    globalShortcut.register("CommandOrControl+Alt+C", function() {
+        sendClipboard();
+    });
+}
+
+function createWindow() {
+    let width = isDev ? 900 : 300;
+    mainWindow = new BrowserWindow({
+        width,
+        height: 650,
+        show: false,
+        resizable: false,
+        alwaysOnTop: false,
+        frame: true,
+        // titleBarStyle: 'customButtonsOnHover',
+        transparent: false,
+        autoHideMenuBar: true,
+        skipTaskbar: true,
+        // closable: false,
+        darkTheme: true
+    });
+
+    mainWindow.loadFile(index);
+    // 图标
+    let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
+    if (process.platform !== "darwin") {
+        mainWindow.setIcon(icon);
+    }
+    // Open the DevTools.
+    isDev && mainWindow.webContents.openDevTools();
+
     mainWindow.once("ready-to-show", () => {
         mainWindow.show();
     });
@@ -457,11 +473,6 @@ function createWindow() {
 
     mainWindow.on("closed", function() {
         mainWindow = null;
-    });
-
-    /* 注册剪贴板事件 */
-    globalShortcut.register("CommandOrControl+Alt+C", function() {
-        sendClipboard();
     });
 }
 
@@ -545,6 +556,7 @@ function setFilesPath() {
 
 /* 打开主窗口 */
 function open() {
+    if (!mainWindow) createWindow();
     if (mainWindow.isMinimized()) mainWindow.restore();
     if (!mainWindow.isVisible()) mainWindow.show();
     mainWindow.focus();
@@ -565,12 +577,12 @@ function sendClipboard() {
     io.emit("new message", content);
     writeText(content, textPath)
         .then(() => {
-            // dialog.showMessageBox({
-            //     type: 'info',
-            //     message: '剪贴板内容发送成功!',
-            //     detail: content,
-            //     buttons: ['OK']
-            // })
+            dialog.showMessageBox({
+                type: 'info',
+                message: '剪贴板内容发送成功!',
+                detail: content,
+                buttons: ['OK']
+            })
         })
         .catch(err => {
             dialog.showMessageBox({
@@ -580,6 +592,16 @@ function sendClipboard() {
                 buttons: ["OK"]
             });
         });
+}
+
+
+/* 设置置顶 */
+function setAlwaysOnTop() {
+    return new Promise((resolve, reject)=>{
+        let flag = !mainWindow.isAlwaysOnTop();
+        mainWindow.setAlwaysOnTop(flag);
+        resolve(flag);
+    })
 }
 
 /* 重启 */
@@ -593,6 +615,7 @@ function quit() {
     if (process.platform !== "darwin") {
         app.isQuiting = true;
     }
+    // mainWindow.destroy();
     app.quit();
 }
 
@@ -609,16 +632,19 @@ function minimize() {
 function checkUpdate() {
     update().then(info => {
         if (info.hasNewVersion) {
-            dialog.showMessageBox({
-                type: "info",
-                message: "发现新版本",
-                detail: info.msg,
-                buttons: ["立即升级", "取消"]
-            }, (response) => {
-                if (response === 0) {
-                    goUpdate();
+            dialog.showMessageBox(
+                {
+                    type: "info",
+                    message: "发现新版本",
+                    detail: info.msg,
+                    buttons: ["立即升级", "取消"]
+                },
+                response => {
+                    if (response === 0) {
+                        goUpdate();
+                    }
                 }
-            });
+            );
         } else {
             dialog.showMessageBox({
                 type: "info",
@@ -662,7 +688,10 @@ if (!gotTheLock) {
     });
 
     // Create mainWindow, load the rest of the app, etc...
-    app.on("ready", createWindow);
+    app.on("ready", () => {
+        startApp();
+        createWindow();
+    });
 }
 
 app.on("window-all-closed", function() {

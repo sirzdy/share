@@ -28,6 +28,8 @@ let update = document.getElementById("update");
 let updateBtn = document.getElementById("updateBtn");
 let updateCancel = document.getElementById("updateCancel");
 let updateInfo = document.getElementById("updateInfo");
+let top = document.getElementById("top");
+let topImg = document.getElementById("topImg");
 
 let lastClickTime = 0;
 let ips, downloadPort, uploadPort;
@@ -38,6 +40,15 @@ let qr = new QRCode(qrcode, {
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.L // LMQH
 });
+
+// window.onbeforeunload = (e) => {
+//     console.log('I do not want to be closed')
+//     // 与通常的浏览器不同,会提示给用户一个消息框,
+//     //返回非空值将默认取消关闭
+//     //建议使用对话框 API 让用户确认关闭应用程序.
+//     e.returnValue = false // 相当于 `return false` ，但是不推荐使用
+// }
+
 
 function hint(msg, type, duration) {
     duration = isNaN(duration) ? 1500 : duration;
@@ -107,11 +118,6 @@ function deleteCollection(e) {
 window.onload = () => {
     ipcRenderer.send("start");
 };
-
-// window.onbeforeunload = () => {
-//     ipcRenderer.send('quit');
-//     return false;
-// };
 
 /* 退出程序 */
 // close.onclick = () => {
@@ -204,6 +210,10 @@ generate.onclick = () => {
     }
 };
 
+top.onclick = () => {
+    ipcRenderer.send("top");
+}
+
 /* 发送文本 */
 send.onclick = () => {
     if (!content.value) {
@@ -242,6 +252,16 @@ links.oncontextmenu = function(event) {
 ipcRenderer.on("start-reply", (event, values) => {
     [{ ips, wirelessIps }, downloadPort, uploadPort, type] = values;
     show(type);
+});
+
+ipcRenderer.on("top-reply", (event, flag) => {
+    if (flag) {
+        topImg.style.transform = 'rotate(0)';
+        topImg.title = '取消置顶';
+    } else {
+        topImg.style.transform = 'rotate(-45deg)';
+        topImg.title = '置顶';
+    }
 });
 
 ipcRenderer.on("copy-reply", (event, rets) => {
