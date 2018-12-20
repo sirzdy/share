@@ -15,6 +15,8 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                -webkit-app-region: drag;
+                -webkit-user-select: none;
             }
             #qrcode {
                 width: 600px;
@@ -22,7 +24,7 @@
             }
             .zoom {
                 width: 30px;
-                height: 50px;
+                height: 30px;
                 display: none;
                 cursor: pointer;
             }
@@ -36,9 +38,30 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                -webkit-app-region: no-drag;
             }
-
             .fn:hover > .zoom {
+                display: block;
+            }
+            .fnb {
+                position: fixed;
+                bottom: 0;
+                padding: 0 25px;
+                left: 0;
+                right: 0;
+                height: 100px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                -webkit-app-region: no-drag;
+            }
+            .close {
+                width: 30px;
+                height: 30px;
+                display: none;
+                cursor: pointer;
+            }
+            .fnb:hover > .close {
                 display: block;
             }
         </style>
@@ -58,6 +81,14 @@
                 src="assets/img/zoom-out.svg"
                 alt=""
                 onclick="zoomOut()"
+            />
+        </div>
+        <div class="fnb">
+            <img
+                class="close"
+                src="assets/img/close.svg"
+                alt=""
+                onclick="window.close()"
             />
         </div>
         <script src="assets/js/qrcode.min.js"></script>
@@ -101,6 +132,19 @@
                 }
                 makeQRCode();
             }
+
+            window.onresize = () => {
+                let w = document.documentElement.clientWidth;
+                let h = document.documentElement.clientHeight;
+                let maxSize = w > h ? h : w;
+                while (size > maxSize - 50) {
+                    if (size <= 50) {
+                        break;
+                    }
+                    size -= 50;
+                }
+                makeQRCode();
+            };
         </script>
     </body>
 </html>

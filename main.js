@@ -260,14 +260,15 @@ function startApp() {
         var win = new BrowserWindow({
             width: 800,
             height: 800,
+            minWidth: 100,
+            minHeight: 100,
             title: title,
             resizable: true,
             parent: mainWindow,
             movable: false,
             alwaysOnTop: true,
             frame: false,
-            backgroundColor: "#fff",
-            titleBarStyle: "hidden"
+            backgroundColor: "#fff"
         });
         win.loadFile(qrcodePage);
         win.webContents.executeJavaScript(`
