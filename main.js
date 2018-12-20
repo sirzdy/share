@@ -254,8 +254,8 @@ function startApp() {
     });
 
     /* 上传文件 */
-    ipcMain.on("top", (event) => {
-        setAlwaysOnTop().then((flag)=>{
+    ipcMain.on("top", event => {
+        setAlwaysOnTop().then(flag => {
             event.sender.send("top-reply", flag);
         });
     });
@@ -433,8 +433,11 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width,
         height: 650,
+        minWidth: width,
+        minHeight: 650,
         show: false,
-        resizable: false,
+        // resizable: false,
+        enableLargerThanScreen: false,
         alwaysOnTop: false,
         frame: true,
         // titleBarStyle: 'customButtonsOnHover',
@@ -578,11 +581,11 @@ function sendClipboard() {
     writeText(content, textPath)
         .then(() => {
             dialog.showMessageBox({
-                type: 'info',
-                message: '剪贴板内容发送成功!',
+                type: "info",
+                message: "剪贴板内容发送成功!",
                 detail: content,
-                buttons: ['OK']
-            })
+                buttons: ["OK"]
+            });
         })
         .catch(err => {
             dialog.showMessageBox({
@@ -594,14 +597,13 @@ function sendClipboard() {
         });
 }
 
-
 /* 设置置顶 */
 function setAlwaysOnTop() {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         let flag = !mainWindow.isAlwaysOnTop();
         mainWindow.setAlwaysOnTop(flag);
         resolve(flag);
-    })
+    });
 }
 
 /* 重启 */
