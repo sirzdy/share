@@ -30,6 +30,9 @@ let updateCancel = document.getElementById("updateCancel");
 let updateInfo = document.getElementById("updateInfo");
 let top = document.getElementById("top");
 let topImg = document.getElementById("topImg");
+let qrcodeCopy = document.getElementById("qrcodeCopy");
+let qrcodeStar = document.getElementById("qrcodeStar");
+let qrcodeDownload = document.getElementById("qrcodeDownload");
 
 let lastClickTime = 0;
 let ips, downloadPort, uploadPort;
@@ -48,7 +51,6 @@ let qr = new QRCode(qrcode, {
 //     //建议使用对话框 API 让用户确认关闭应用程序.
 //     e.returnValue = false // 相当于 `return false` ，但是不推荐使用
 // }
-
 
 function hint(msg, type, duration) {
     duration = isNaN(duration) ? 1500 : duration;
@@ -190,8 +192,20 @@ qrcode.onclick = () => {
     lastClickTime = now;
 };
 
-qrcode.oncontextmenu = () => {
+qrcodeStar.onclick = () => {
     remarkPopup.style.display = "flex";
+};
+
+qrcodeCopy.onclick = () => {
+    // 拷贝图片
+    let dataURL = qrcode.children[1].src;
+    ipcRenderer.send("copy-img", dataURL);
+};
+
+qrcodeDownload.onclick = () => {
+    // 拷贝图片
+    let dataURL = qrcode.children[1].src;
+    ipcRenderer.send("download-img", dataURL);
 };
 
 /* 将文字生成位二维码 */
@@ -212,7 +226,7 @@ generate.onclick = () => {
 
 top.onclick = () => {
     ipcRenderer.send("top");
-}
+};
 
 /* 发送文本 */
 send.onclick = () => {
@@ -256,11 +270,11 @@ ipcRenderer.on("start-reply", (event, values) => {
 
 ipcRenderer.on("top-reply", (event, flag) => {
     if (flag) {
-        topImg.style.transform = 'rotate(0)';
-        topImg.title = '取消置顶';
+        topImg.style.transform = "rotate(0)";
+        topImg.title = "取消置顶";
     } else {
-        topImg.style.transform = 'rotate(-45deg)';
-        topImg.title = '置顶';
+        topImg.style.transform = "rotate(-45deg)";
+        topImg.title = "置顶";
     }
 });
 
@@ -301,9 +315,17 @@ ipcRenderer.on("collect-reply", (event, state) => {
 
 ipcRenderer.on("copy-clipboard-reply", (event, state) => {
     if (state) {
-        hint("复制成功!!!");
+        hint("复制文本成功!!!");
     } else {
-        hint("复制失败!", "fail");
+        hint("复制文本失败!", "fail");
+    }
+});
+
+ipcRenderer.on("copy-img-reply", (event, state) => {
+    if (state) {
+        hint("复制二维码成功!!!");
+    } else {
+        hint("复制二维码失败!", "fail");
     }
 });
 

@@ -44,7 +44,7 @@ const defaultPath = path.join(os.homedir(), "Documents", "files");
 /* 默认类型，仅显示无线网 */
 let type = null;
 const defaultType = 1;
-const isDev = false;
+const isDev = true;
 const localVersion = "3.2.0";
 
 let filesPath = defaultPath;
@@ -298,6 +298,27 @@ function startApp() {
     ipcMain.on("copy-clipboard", (event, content) => {
         clipboard.writeText(content);
         event.sender.send("copy-clipboard-reply", true);
+    });
+
+    /* 拷贝二维码 */
+    ipcMain.on("copy-img", (event, dataURL) => {
+        // let image = nativeImage.createFromPath(path.join(__dirname, "tray.png"));
+        let image = nativeImage.createFromDataURL(dataURL);
+        clipboard.writeImage(image);
+        event.sender.send("copy-img-reply", true);
+    });
+
+    /* 下载二维码 */
+    ipcMain.on("download-img", (event, dataURL) => {
+        let image = nativeImage.createFromDataURL(dataURL);
+        dialog.showSaveDialog(mainWindow, {
+            title: '请选择要保存的位置'
+        },() => {
+            console.log('saved')
+        });
+
+        // clipboard.writeImage(image);
+        // event.sender.send("download-img-reply", true);
     });
 
     /* 查询收藏 */

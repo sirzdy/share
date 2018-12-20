@@ -104,6 +104,35 @@ textarea {
     position: relative;
 }
 
+.qrcode_fn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.qrcode_fn_btn {
+    flex: 1;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.qrcode_fn_btn_img {
+    width: 20px;
+    height: 20px;
+}
+
+.qrcode_fn_btn_txt {
+    margin-left: 5px;
+}
+
 #links {
     flex: 1;
     height: 100%;
