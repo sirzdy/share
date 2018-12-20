@@ -66,6 +66,10 @@
 
 ![电脑端](snapshot/pc-collection.png)
 
+【电脑端二维码】
+
+![电脑端二维码](snapshot/pc-qrcode.png)
+
 ### 移动端
 
 【首页快照】
