@@ -265,8 +265,7 @@ function startApp() {
             title: title,
             resizable: true,
             parent: mainWindow,
-            // movable: false,
-            alwaysOnTop: true,
+            alwaysOnTop: false,
             frame: false,
             backgroundColor: "#fff"
         });
