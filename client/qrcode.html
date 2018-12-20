@@ -1,174 +1,167 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>QRCode</title>
-        <style>
-            body {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                padding: 0;
-                margin: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                -webkit-app-region: drag;
-                -webkit-user-select: none;
-            }
 
-            #qrcode {
-                width: 600px;
-                height: 600px;
-                -webkit-app-region: no-drag;
-            }
+<head>
+    <meta charset="UTF-8" />
+    <title>QRCode</title>
+    <style>
+        body {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-app-region: drag;
+            -webkit-user-select: none;
+        }
 
-            .zoom {
-                width: 30px;
-                height: 30px;
-                display: none;
-                cursor: pointer;
-                -webkit-app-region: no-drag;
-            }
+        #qrcode {
+            width: 600px;
+            height: 600px;
+            -webkit-app-region: no-drag;
+        }
 
-            .fn {
-                position: fixed;
-                top: 0;
-                padding: 0 25px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                -webkit-app-region: no-drag;
-            }
+        .zoom {
+            width: 30px;
+            height: 30px;
+            display: none;
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+        }
 
-            .fn:hover > .zoom {
-                display: block;
-            }
+        .fn {
+            position: fixed;
+            top: 0;
+            padding: 0 25px;
+            left: 0;
+            right: 0;
+            height: 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-app-region: no-drag;
+        }
 
-            .fnb {
-                position: fixed;
-                bottom: 0;
-                padding: 0 25px;
-                left: 0;
-                right: 0;
-                height: 100px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                -webkit-app-region: no-drag;
-            }
+        .fn:hover>.zoom {
+            display: block;
+        }
 
-            .close {
-                width: 30px;
-                height: 30px;
-                display: none;
-                cursor: pointer;
-                -webkit-app-region: no-drag;
-            }
+        .fnb {
+            position: fixed;
+            bottom: 0;
+            padding: 0 25px;
+            left: 0;
+            right: 0;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-app-region: no-drag;
+        }
 
-            .fnb:hover > .close,
-            .fnb:hover > .zoom {
-                display: block;
-            }
+        .close {
+            width: 30px;
+            height: 30px;
+            display: none;
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+        }
 
-            .fill {
-                flex: 1;
-            }
-        </style>
-    </head>
+        .fnb:hover>.close,
+        .fnb:hover>.zoom {
+            display: block;
+        }
 
-    <body>
-        <div id="qrcode" onmousewheel="onmousewheel()"></div>
-        <!-- <div class="fn">
+        .fill {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="qrcode"></div>
+    <!-- <div class="fn">
         <img class="zoom" src="assets/img/zoom-in.svg" alt="" onclick="zoomIn()" />
         <div class="fill"></div>
         <img class="zoom" src="assets/img/zoom-out.svg" alt="" onclick="zoomOut()" />
     </div> -->
-        <div class="fnb">
-            <img
-                class="zoom"
-                src="assets/img/zoom-out.svg"
-                alt=""
-                onclick="zoomOut()"
-            />
-            <div class="fill"></div>
-            <img
-                class="close"
-                src="assets/img/close.svg"
-                alt=""
-                onclick="window.close()"
-            />
-            <div class="fill"></div>
-            <img
-                class="zoom"
-                src="assets/img/zoom-in.svg"
-                alt=""
-                onclick="zoomIn()"
-            />
-        </div>
-        <script src="assets/js/qrcode.min.js"></script>
-        <script>
-            let size = 600;
-            let qrContent = "";
-            let qrcode = document.getElementById("qrcode");
+    <div class="fnb">
+        <img class="zoom" src="assets/img/zoom-out.svg" alt="" onclick="zoomOut()" />
+        <div class="fill"></div>
+        <img class="close" src="assets/img/close.svg" alt="" onclick="window.close()" />
+        <div class="fill"></div>
+        <img class="zoom" src="assets/img/zoom-in.svg" alt="" onclick="zoomIn()" />
+    </div>
+    <script src="assets/js/qrcode.min.js"></script>
+    <script>
+        let size = 600;
+        let qrContent = "";
+        let qrcode = document.getElementById("qrcode");
 
-            function init(content) {
-                qrContent = content;
-                makeQRCode();
+        function init(content) {
+            qrContent = content;
+            makeQRCode();
+        }
+
+        function makeQRCode() {
+            qrcode.innerHTML = "";
+            qrcode.style.width = size + "px";
+            qrcode.style.height = size + "px";
+            new QRCode(qrcode, {
+                text: qrContent,
+                width: size,
+                height: size,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.L // LMQH
+            });
+        }
+
+        function zoomIn() {
+            let w = document.documentElement.clientWidth;
+            let h = document.documentElement.clientHeight;
+            let maxSize = w > h ? h : w;
+            if (size < maxSize - 50) {
+                size += 50;
             }
+            makeQRCode();
+        }
 
-            function makeQRCode() {
-                qrcode.innerHTML = "";
-                qrcode.style.width = size + "px";
-                qrcode.style.height = size + "px";
-                new QRCode(qrcode, {
-                    text: qrContent,
-                    width: size,
-                    height: size,
-                    colorDark: "#000000",
-                    colorLight: "#ffffff",
-                    correctLevel: QRCode.CorrectLevel.L // LMQH
-                });
+        function zoomOut() {
+            if (size > 50) {
+                size -= 50;
             }
+            makeQRCode();
+        }
 
-            function zoomIn() {
-                let w = document.documentElement.clientWidth;
-                let h = document.documentElement.clientHeight;
-                let maxSize = w > h ? h : w;
-                if (size < maxSize - 50) {
-                    size += 50;
+        window.onresize = () => {
+            let w = document.documentElement.clientWidth;
+            let h = document.documentElement.clientHeight;
+            let maxSize = w > h ? h : w;
+            while (size > maxSize - 50) {
+                if (size <= 50) {
+                    break;
                 }
-                makeQRCode();
+                size -= 50;
             }
+            makeQRCode();
+        };
 
-            function zoomOut() {
-                if (size > 50) {
-                    size -= 50;
-                }
-                makeQRCode();
+        window.onmousewheel = document.onmousewheel = () => {
+            let delta = window.event.wheelDelta;
+            if (delta > 0) {
+                zoomIn();
             }
-
-            window.onresize = () => {
-                let w = document.documentElement.clientWidth;
-                let h = document.documentElement.clientHeight;
-                let maxSize = w > h ? h : w;
-                while (size > maxSize - 50) {
-                    if (size <= 50) {
-                        break;
-                    }
-                    size -= 50;
-                }
-                makeQRCode();
-            };
-
-            function onmousewheel() {
-                alert(window.event.wheelDelta)
+            if (delta < 0) {
+                zoomOut();
             }
-        </script>
-    </body>
+        }
+    </script>
+</body>
+
 </html>
