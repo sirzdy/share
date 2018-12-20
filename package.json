@@ -1,6 +1,6 @@
 {
   "name": "Share",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Share files and text in the LAN(Local Area Network).",
   "main": "main.js",
   "scripts": {

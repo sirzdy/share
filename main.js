@@ -1,3 +1,6 @@
+// 版本号
+const localVersion = "3.3.0";
+
 // Modules to control application life and create native browser window
 const {
     app,
@@ -47,7 +50,6 @@ const defaultPath = path.join(os.homedir(), "Documents", "files");
 let type = null;
 const defaultType = 1;
 const isDev = false;
-const localVersion = "3.2.0";
 
 let filesPath = defaultPath;
 let uploadPath;
