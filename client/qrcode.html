@@ -71,6 +71,10 @@
             cursor: pointer;
             -webkit-app-region: no-drag;
         }
+        
+        .fnb:hover {
+            background:  linear-gradient(to bottom, rgba(0,0,0,0) 0, rgba(0,0,0,0.3) 100%);
+        }
 
         .fnb:hover>.close,
         .fnb:hover>.zoom {
@@ -128,7 +132,7 @@
             let w = document.documentElement.clientWidth;
             let h = document.documentElement.clientHeight;
             let maxSize = w > h ? h : w;
-            if (size < maxSize - 50) {
+            if (size < maxSize - 150) {
                 size += 50;
             }
             makeQRCode();
@@ -145,7 +149,7 @@
             let w = document.documentElement.clientWidth;
             let h = document.documentElement.clientHeight;
             let maxSize = w > h ? h : w;
-            while (size > maxSize - 50) {
+            while (size > maxSize - 150) {
                 if (size <= 50) {
                     break;
                 }

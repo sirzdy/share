@@ -262,8 +262,8 @@ function startApp() {
         var win = new BrowserWindow({
             width: 800,
             height: 800,
-            minWidth: 100,
-            minHeight: 100,
+            minWidth: 300,
+            minHeight: 300,
             resizable: true,
             parent: mainWindow,
             alwaysOnTop: false,
