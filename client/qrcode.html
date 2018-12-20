@@ -99,6 +99,8 @@
     </div>
     <script src="assets/js/qrcode.min.js"></script>
     <script>
+        const { ipcRenderer } = require("electron");
+
         let size = 600;
         let qrContent = "";
         let qrcode = document.getElementById("qrcode");
@@ -161,6 +163,11 @@
                 zoomOut();
             }
         }
+
+        ipcRenderer.send("get-qr");
+        ipcRenderer.on("get-qr-reply", (event, content) => {
+           init(content);
+        });
     </script>
 </body>
 

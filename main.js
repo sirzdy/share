@@ -59,6 +59,8 @@ let mainWindow = null;
 let tray = null;
 let icon = nativeImage.createFromPath(path.join(__dirname, "icon.png"));
 
+let qrContent='';
+
 function startApp() {
     let settingPath = null;
     let settingType = null;
@@ -256,13 +258,12 @@ function startApp() {
     });
 
     /* 放大 */
-    ipcMain.on("zoom", (event, content, title) => {
+    ipcMain.on("zoom", (event, content) => {
         var win = new BrowserWindow({
             width: 800,
             height: 800,
             minWidth: 100,
             minHeight: 100,
-            title: title,
             resizable: true,
             parent: mainWindow,
             alwaysOnTop: false,
@@ -270,9 +271,12 @@ function startApp() {
             backgroundColor: "#fff"
         });
         win.loadFile(qrcodePage);
-        win.webContents.executeJavaScript(`
-            init('${content}')
-        `);
+        qrContent = content;
+    });
+
+    /* 放大 */
+    ipcMain.on("get-qr", (event, content) => {
+        event.sender.send("get-qr-reply", qrContent);
     });
 
     /* 上传文件 */
