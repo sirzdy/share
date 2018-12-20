@@ -39,12 +39,14 @@ const gotTheLock = app.requestSingleInstanceLock();
 const basePort = 1225;
 /* 主页 */
 const index = "./client/index.html";
+/* 二维码 */
+const qrcodePage = "./client/qrcode.html";
 /* 默认路径, 实际路径 */
 const defaultPath = path.join(os.homedir(), "Documents", "files");
 /* 默认类型，仅显示无线网 */
 let type = null;
 const defaultType = 1;
-const isDev = true;
+const isDev = false;
 const localVersion = "3.2.0";
 
 let filesPath = defaultPath;
@@ -253,6 +255,26 @@ function startApp() {
         minimize();
     });
 
+    /* 放大 */
+    ipcMain.on("zoom", (event, content, title) => {
+        var win = new BrowserWindow({
+            width: 800,
+            height: 800,
+            title: title,
+            resizable: true,
+            parent: mainWindow,
+            movable: false,
+            alwaysOnTop: true,
+            frame: false,
+            backgroundColor: "#fff",
+            titleBarStyle: "hidden"
+        });
+        win.loadFile(qrcodePage);
+        win.webContents.executeJavaScript(`
+            init('${content}')
+        `);
+    });
+
     /* 上传文件 */
     ipcMain.on("top", event => {
         setAlwaysOnTop().then(flag => {
@@ -310,15 +332,27 @@ function startApp() {
 
     /* 下载二维码 */
     ipcMain.on("download-img", (event, dataURL) => {
-        let image = nativeImage.createFromDataURL(dataURL);
-        dialog.showSaveDialog(mainWindow, {
-            title: '请选择要保存的位置'
-        },() => {
-            console.log('saved')
-        });
-
-        // clipboard.writeImage(image);
-        // event.sender.send("download-img-reply", true);
+        dialog.showSaveDialog(
+            mainWindow,
+            {
+                title: "请选择要保存的位置",
+                defaultPath: path.join(os.homedir(), "Desktop", "qrcode.png")
+            },
+            filename => {
+                if (!filename) return;
+                fs.writeFile(
+                    filename,
+                    nativeImage.createFromDataURL(dataURL).toPNG(),
+                    err => {
+                        if (err) {
+                            event.sender.send("download-img-reply", true);
+                            throw err;
+                        }
+                        event.sender.send("download-img-reply", true);
+                    }
+                );
+            }
+        );
     });
 
     /* 查询收藏 */

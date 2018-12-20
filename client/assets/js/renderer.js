@@ -2,6 +2,7 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 const { ipcRenderer } = require("electron");
+
 const helpLink = "https://github.com/sirzdy/share";
 const feedbackLink = "https://github.com/sirzdy/share/issues";
 let container = document.getElementById("container");
@@ -70,7 +71,7 @@ function hint(msg, type, duration) {
     m.style.cssText =
         "width: 60%;min-width: 150px;opacity: 0.9;padding: 10px 0;color: " +
         color +
-        ";line-height: 30px;text-align: center;border-radius: 5px;position: fixed;top: 60px;left: 50%;transform:translateX(-50%);z-index: 999999;background: " +
+        ";line-height: 30px;text-align: center;border-radius: 5px;position: fixed;top: 20px;left: 50%;transform:translateX(-50%);z-index: 999999;background: " +
         backgroundColor +
         ";font-size: 12px;";
     document.body.appendChild(m);
@@ -187,7 +188,7 @@ collect.onclick = () => {
 qrcode.onclick = () => {
     let now = Date.now();
     if (now - lastClickTime < 300) {
-        remarkPopup.style.display = "flex";
+        ipcRenderer.send("zoom", qrcode.title);
     }
     lastClickTime = now;
 };
@@ -292,58 +293,64 @@ ipcRenderer.on("copy-reply", (event, rets) => {
     });
     fail.length
         ? alert(sucHint + suc.join("\n") + "\n" + failHint + fail.join("\n"))
-        : hint("复制成功!!!");
+        : hint("复制成功");
 });
 
 ipcRenderer.on("send-reply", (event, state) => {
     if (state) {
-        hint("发送成功!!!");
+        hint("发送成功");
     } else {
-        hint("发送失败!", "fail");
+        hint("发送失败", "fail");
     }
 });
 
 ipcRenderer.on("collect-reply", (event, state) => {
     if (state) {
-        hint("收藏成功!!!");
-        // collectImg.style.display = 'block';
-        // uncollectImg.style.display = 'none';
+        hint("收藏成功");
     } else {
-        hint("收藏失败!", "fail");
+        hint("收藏失败", "fail");
     }
 });
 
 ipcRenderer.on("copy-clipboard-reply", (event, state) => {
     if (state) {
-        hint("复制文本成功!!!");
+        hint("复制文本成功");
     } else {
-        hint("复制文本失败!", "fail");
+        hint("复制文本失败", "fail");
     }
 });
 
 ipcRenderer.on("copy-img-reply", (event, state) => {
     if (state) {
-        hint("复制二维码成功!!!");
+        hint("复制二维码成功");
     } else {
-        hint("复制二维码失败!", "fail");
+        hint("复制二维码失败", "fail");
+    }
+});
+
+ipcRenderer.on("download-img-reply", (event, state) => {
+    if (state) {
+        hint("保存成功");
+    } else {
+        hint("保存失败", "fail");
     }
 });
 
 ipcRenderer.on("delete-collection-reply", (event, state) => {
     if (state) {
-        hint("删除成功!!!");
+        hint("删除成功");
     } else {
-        hint("删除失败!", "fail");
+        hint("删除失败", "fail");
     }
 });
 
 ipcRenderer.on("get-collect-reply", (event, data) => {
     if (data) {
         if (data.length === 0) {
-            hint("暂无收藏!", "fail");
+            hint("暂无收藏", "fail");
             return;
         }
-        // hint('获取收藏成功!!!');
+        // hint('获取收藏成功');
         myCollectionPopup.style.display = "flex";
         data.sort((a, b) => b[0] - a[0]);
         let cons = [];
@@ -389,7 +396,7 @@ ipcRenderer.on("get-collect-reply", (event, data) => {
             myCollections.appendChild(collection);
         });
     } else {
-        hint("获取收藏失败!", "fail");
+        hint("获取收藏失败", "fail");
     }
 });
 

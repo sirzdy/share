@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>QRCode</title>
+        <style>
+            body {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            #qrcode {
+                width: 600px;
+                height: 600px;
+            }
+            .zoom {
+                width: 30px;
+                height: 50px;
+                display: none;
+                cursor: pointer;
+            }
+            .fn {
+                position: fixed;
+                top: 0;
+                padding: 0 25px;
+                left: 0;
+                right: 0;
+                height: 100px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .fn:hover > .zoom {
+                display: block;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="qrcode"></div>
+        <div class="fn">
+            <img
+                class="zoom"
+                src="assets/img/zoom-in.svg"
+                alt=""
+                onclick="zoomIn()"
+            />
+            <img
+                class="zoom"
+                src="assets/img/zoom-out.svg"
+                alt=""
+                onclick="zoomOut()"
+            />
+        </div>
+        <script src="assets/js/qrcode.min.js"></script>
+        <script>
+            let size = 600;
+            let qrContent = "";
+            let qrcode = document.getElementById("qrcode");
+
+            function init(content) {
+                qrContent = content;
+                makeQRCode();
+            }
+
+            function makeQRCode() {
+                qrcode.innerHTML = "";
+                qrcode.style.width = size + "px";
+                qrcode.style.height = size + "px";
+                new QRCode(qrcode, {
+                    text: qrContent,
+                    width: size,
+                    height: size,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.L // LMQH
+                });
+            }
+
+            function zoomIn() {
+                let w = document.documentElement.clientWidth;
+                let h = document.documentElement.clientHeight;
+                let maxSize = w > h ? h : w;
+                if (size < maxSize - 50) {
+                    size += 50;
+                }
+                makeQRCode();
+            }
+
+            function zoomOut() {
+                if (size > 50) {
+                    size -= 50;
+                }
+                makeQRCode();
+            }
+        </script>
+    </body>
+</html>
