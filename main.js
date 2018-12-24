@@ -1,5 +1,5 @@
 // 版本号
-const localVersion = "3.3.0";
+const localVersion = "3.3.1";
 
 // Modules to control application life and create native browser window
 const {
