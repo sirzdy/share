@@ -63,9 +63,9 @@
 
 ![电脑端](snapshot/pc-main.png)
 
-【电脑端收藏】
+<!-- 【电脑端收藏】
 
-![电脑端](snapshot/pc-collection.png)
+![电脑端](snapshot/pc-collection.png) -->
 
 【电脑端二维码】
 
@@ -85,13 +85,13 @@
 
 ![上传快照](snapshot/mobile-upload.png)
 
-【文本传输快照】
+<!-- 【文本传输快照】
 
-![文本传输快照](snapshot/mobile-texts.png)
+![文本传输快照](snapshot/mobile-texts.png) -->
 
-【收藏快照】
+<!-- 【收藏快照】
 
-![文本传输快照](snapshot/mobile-collections.png)
+![文本传输快照](snapshot/mobile-collections.png) -->
 
 ## 演示
 
