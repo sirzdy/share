@@ -43,7 +43,7 @@
 
 ### 使用
 
-- 使用前请确保电脑与移动设备处于同一局域网，包括同一路由器下的不同设备或者设备共享热点的方式(windows可以通过win10自带移动热点或猎豹wifi等共享热点)，mac通过共享功能开启热点。)。
+- 使用前请确保电脑与移动设备处于同一局域网，包括同一路由器下的不同设备或者设备共享热点的方式(windows可以通过win10自带移动热点或猎豹wifi等共享热点，mac通过共享功能开启热点)。
 - 在电脑上打开应用服务端。应用将启动服务，生成导航链接，并生成当前高亮链接的二维码。链接会生成多个，请自行选择跟移动设备对应的链接。
 - 左键点击链接可以生成对应的二维码，右键点击链接在默认浏览器中打开当前链接。
 - 双击二维码可以进行独立窗口缩放
@@ -121,7 +121,7 @@ git clone https://github.com/sirzdy/file-transfer.git
 cd file-transfer
 # Install dependencies
 npm install electron-builder -g
-npm install  # sudo npm install --unsafe-perm=true --allow-root 报错请尝试
+npm install  # 报错请尝试 sudo npm install --unsafe-perm=true --allow-root
 # Run the app
 npm start
 # Pack 
@@ -139,7 +139,3 @@ npm run dist
 - 使用 [QRCode.js](https://github.com/davidshimjs/qrcodejs) 实现二维码生成
 - 使用 [socket.io](https://socket.io/) 实现文本传输
 - 使用 [fast-csv](https://github.com/C2FO/fast-csv) 实现文本存储到csv文件
-
-## License
-
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
